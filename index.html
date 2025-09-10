@@ -230,8 +230,11 @@
         }
 
         .node-content.highlighted {
-            background: #f0f0f0;
-            border-color: #999999;
+            background: #fff3e0 !important;
+            border: 3px solid #ff6b35 !important;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.3) !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
         }
 
         .toggle-btn {
@@ -453,6 +456,62 @@
 
         .confirmation-btn.secondary:hover {
             background: #5a6268;
+        }
+
+        /* Floating Help Button */
+        .floating-help {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-help:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+        }
+
+        .floating-help:active {
+            transform: translateY(0);
+        }
+
+        /* Search Arrow Indicators */
+        .search-arrow {
+            position: fixed;
+            right: 10px;
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-right: 20px solid #ff6b35;
+            z-index: 500;
+            animation: searchPulse 1.5s ease-in-out infinite;
+            filter: drop-shadow(-2px 0 4px rgba(255, 107, 53, 0.3));
+        }
+
+        @keyframes searchPulse {
+            0%, 100% {
+                opacity: 0.8;
+                transform: translateX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-5px);
+            }
         }
 
         .auto-save-indicator {
@@ -745,12 +804,10 @@
             <button class="btn" onclick="exportToCSV()" id="exportBtn" disabled>💾 Export CSV</button>
             <button class="btn" onclick="toggleEditMode()" id="editBtn" disabled>✏️ Edit Mode</button>
             <button class="btn" onclick="toggleDuplicateDetection()" id="duplicateBtn" disabled>🔍 Find Duplicates</button>
-            <button class="btn" onclick="showHelpModal()">❓ Help</button>
-            <button class="btn" onclick="downloadSample()">📥 Sample CSV</button>
             <button class="btn" onclick="expandLevel(1)" id="expandL1" disabled>Show L1</button>
             <button class="btn" onclick="expandLevel(2)" id="expandL2" disabled>Show L1-2</button>
             <button class="btn" onclick="collapseAll()" id="collapseBtn" disabled>Collapse All</button>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes (English/German)..." oninput="searchNodes()" disabled>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes (English/German) - Press Enter to search..." onkeypress="handleSearchKeypress(event)" disabled>
             <button class="btn" onclick="clearSearch()" id="clearSearchBtn" disabled>Clear</button>
             <span id="autoSaveIndicator" class="auto-save-indicator"></span>
         </div>
@@ -2085,14 +2142,17 @@
             const searchInput = document.getElementById('searchInput');
             searchTerm = searchInput.value.toLowerCase().trim();
             
+            // Clear previous search results and arrows
             document.querySelectorAll('.node-content.highlighted').forEach(element => {
                 element.classList.remove('highlighted');
             });
+            clearSearchArrows();
             
             if (searchTerm === '') return;
             
             let matchCount = 0;
             const startTime = Date.now();
+            const matchingNodes = [];
             
             flatNodesMap.forEach((node, nodeId) => {
                 const englishMatch = node.name.toLowerCase().includes(searchTerm);
@@ -2105,6 +2165,7 @@
                     const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
                     if (nodeElement) {
                         nodeElement.classList.add('highlighted');
+                        matchingNodes.push(nodeElement);
                     }
                 }
             });
@@ -2112,7 +2173,10 @@
             const searchTime = Date.now() - startTime;
             updatePerformanceInfo(`Found ${matchCount} matches in ${searchTime}ms`);
             
+            // Add arrow indicators for all matching nodes
             setTimeout(() => {
+                addSearchArrows(matchingNodes);
+                
                 const firstMatch = document.querySelector('.node-content.highlighted');
                 if (firstMatch) {
                     firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2140,12 +2204,57 @@
             });
         }
 
+        function addSearchArrows(matchingNodes) {
+            clearSearchArrows(); // Clear any existing arrows first
+            
+            matchingNodes.forEach((nodeElement, index) => {
+                const rect = nodeElement.getBoundingClientRect();
+                const arrow = document.createElement('div');
+                arrow.className = 'search-arrow';
+                arrow.style.top = (rect.top + rect.height / 2 - 12) + 'px'; // Center arrow with node
+                arrow.setAttribute('data-node-id', nodeElement.closest('[data-id]').getAttribute('data-id'));
+                
+                // Add a slight delay for each arrow to create a staggered animation effect
+                arrow.style.animationDelay = (index * 0.2) + 's';
+                
+                document.body.appendChild(arrow);
+            });
+            
+            // Update arrow positions on scroll
+            updateArrowPositions();
+        }
+
+        function updateArrowPositions() {
+            const arrows = document.querySelectorAll('.search-arrow');
+            arrows.forEach(arrow => {
+                const nodeId = arrow.getAttribute('data-node-id');
+                const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
+                if (nodeElement) {
+                    const rect = nodeElement.getBoundingClientRect();
+                    // Only show arrow if node is visible on screen
+                    if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                        arrow.style.top = (rect.top + rect.height / 2 - 12) + 'px';
+                        arrow.style.display = 'block';
+                    } else {
+                        arrow.style.display = 'none'; // Hide arrows for off-screen nodes
+                    }
+                }
+            });
+        }
+
+        function clearSearchArrows() {
+            document.querySelectorAll('.search-arrow').forEach(arrow => {
+                arrow.remove();
+            });
+        }
+
         function clearSearch() {
             document.getElementById('searchInput').value = '';
             searchTerm = '';
             document.querySelectorAll('.node-content.highlighted').forEach(element => {
                 element.classList.remove('highlighted');
             });
+            clearSearchArrows(); // Clear arrows when clearing search
             updatePerformanceInfo('Search cleared');
         }
 
@@ -2175,8 +2284,16 @@
                     searchInput.value = '';
                     searchInput.placeholder = 'Import data to enable search...';
                 } else {
-                    searchInput.placeholder = 'Search nodes (English/German)...';
+                    searchInput.placeholder = 'Search nodes (English/German) - Press Enter to search...';
                 }
+            }
+        }
+
+        // Search functionality
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchNodes();
             }
         }
 
@@ -2254,25 +2371,12 @@
                 'Clear All Data',
                 message,
                 function() {
-                    // Original clear data logic
-                    nodesData = [];
-                    flatNodesMap.clear();
-                    renderedNodes.clear();
-                    originalFileName = '';
-                    
-                    const container = document.getElementById('organigramContainer');
-                    container.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">Import a CSV file to display the organigram</div>';
-                    
-                    // Clear search
-                    const searchInput = document.getElementById('searchInput');
-                    searchInput.value = '';
-                    
-                    // Update UI state
-                    updateToolbarState(false);
+                    // Clear session data and refresh the page for a fresh start
                     clearSession();
-                    setUnsavedChanges(false);
+                    localStorage.removeItem('organigram_session');
                     
-                    updatePerformanceInfo('All data cleared');
+                    // Refresh the page to start completely fresh
+                    window.location.reload();
                 }
             );
         }
@@ -2285,6 +2389,13 @@
                 event.returnValue = message;
                 return message;
             }
+        });
+
+        // Update search arrow positions on scroll
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(updateArrowPositions, 16); // Throttle to ~60fps
         });
 
         // Modal event listeners
@@ -2311,6 +2422,11 @@
             }
         });
     </script>
+
+    <!-- Floating Help Button -->
+    <button class="floating-help" onclick="showHelpModal()" title="Help & Documentation">
+        ❓
+    </button>
 
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="confirmation-modal">
