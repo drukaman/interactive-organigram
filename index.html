@@ -321,6 +321,48 @@
             color: #856404;
         }
 
+        .node-renamed {
+            background-color: #e8f5e8 !important;
+            border-color: #28a745 !important;
+            position: relative;
+        }
+
+        .renamed-indicator {
+            color: #28a745;
+            font-size: 10px;
+            margin-left: 4px;
+            padding: 1px 3px;
+            background: #d4edda;
+            border-radius: 2px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auto-save-indicator {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+
+        .auto-save-indicator.saving {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .auto-save-indicator.saved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auto-save-indicator.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         .duplicate-panel {
             position: fixed;
             bottom: 20px;
@@ -590,6 +632,7 @@
             <button class="btn" onclick="collapseAll()" id="collapseBtn" disabled>Collapse All</button>
             <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..." oninput="searchNodes()" disabled>
             <button class="btn" onclick="clearSearch()" id="clearSearchBtn" disabled>Clear</button>
+            <span id="autoSaveIndicator" class="auto-save-indicator"></span>
         </div>
     </div>
 
@@ -678,7 +721,17 @@
                     <li><strong>Edit Mode</strong> - Click "✏️ Edit Mode" to enable label editing</li>
                     <li><strong>Click Labels</strong> - Click any node name to edit it</li>
                     <li><strong>Save Changes</strong> - Press Enter or click away to save</li>
-                    <li><strong>Export CSV</strong> - Download your edited data as CSV</li>
+                    <li><strong>Auto-Save</strong> - Changes are automatically saved to browser cache</li>
+                    <li><strong>Renamed Tracking</strong> - Edited nodes are marked with ✏️ and "renamed" column set to TRUE</li>
+                    <li><strong>Export CSV</strong> - Download your edited data as CSV with renamed flags</li>
+                </ul>
+                
+                <h4>Auto-Save Features:</h4>
+                <ul>
+                    <li><strong>Session Cache</strong> - All changes saved automatically to browser storage</li>
+                    <li><strong>Visual Indicators</strong> - Green highlighting for renamed nodes</li>
+                    <li><strong>Status Display</strong> - Auto-save indicator shows save status in toolbar</li>
+                    <li><strong>Renamed Column</strong> - CSV export includes TRUE/FALSE for edited nodes</li>
                 </ul>
                 
                 <h4>Duplicate Detection:</h4>
@@ -709,6 +762,167 @@
         let originalFileName = 'organigram_data';
         let duplicateDetectionActive = false;
         let duplicateGroups = new Map();
+        
+        // Auto-save and session management
+        let sessionData = {
+            originalData: null,
+            modifiedNodes: new Map(),
+            lastSaved: null,
+            autoSaveEnabled: true
+        };
+        const AUTO_SAVE_DELAY = 1000; // 1 second after last change
+        let autoSaveTimeout = null;
+
+        // Auto-save and session management functions
+        function initializeSession(data) {
+            sessionData.originalData = JSON.parse(JSON.stringify(data));
+            sessionData.modifiedNodes.clear();
+            sessionData.lastSaved = Date.now();
+            
+            // Add 'renamed' property to all nodes
+            function addRenamedProperty(nodes) {
+                nodes.forEach(node => {
+                    if (!node.hasOwnProperty('renamed')) {
+                        node.renamed = false;
+                    }
+                    if (node.children && node.children.length > 0) {
+                        addRenamedProperty(node.children);
+                    }
+                });
+            }
+            
+            addRenamedProperty(nodesData);
+            saveSession();
+            updatePerformanceInfo('Session initialized - Auto-save enabled');
+        }
+        
+        function saveSession() {
+            try {
+                const sessionState = {
+                    originalData: sessionData.originalData,
+                    modifiedNodes: Array.from(sessionData.modifiedNodes.entries()),
+                    lastSaved: Date.now(),
+                    fileName: originalFileName,
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('organigram_session', JSON.stringify(sessionState));
+                sessionData.lastSaved = Date.now();
+                
+                // Update UI indicator
+                updateAutoSaveIndicator('saved');
+            } catch (error) {
+                console.error('Failed to save session:', error);
+                updateAutoSaveIndicator('error');
+            }
+        }
+        
+        function loadSession() {
+            try {
+                const saved = localStorage.getItem('organigram_session');
+                if (!saved) return false;
+                
+                const sessionState = JSON.parse(saved);
+                sessionData.originalData = sessionState.originalData;
+                sessionData.modifiedNodes = new Map(sessionState.modifiedNodes);
+                sessionData.lastSaved = sessionState.lastSaved;
+                
+                if (sessionState.fileName) {
+                    originalFileName = sessionState.fileName;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Failed to load session:', error);
+                return false;
+            }
+        }
+        
+        function markNodeAsRenamed(nodeId, newName, oldName) {
+            const node = flatNodesMap.get(nodeId);
+            if (!node) return;
+            
+            // Update the node data
+            node.name = newName;
+            node.renamed = true;
+            
+            // Track the modification
+            sessionData.modifiedNodes.set(nodeId, {
+                originalName: oldName,
+                newName: newName,
+                timestamp: Date.now(),
+                renamed: true
+            });
+            
+            // Trigger auto-save
+            scheduleAutoSave();
+            
+            // Update visual indicator
+            updateNodeVisualState(nodeId);
+        }
+        
+        function scheduleAutoSave() {
+            if (autoSaveTimeout) {
+                clearTimeout(autoSaveTimeout);
+            }
+            
+            updateAutoSaveIndicator('saving');
+            
+            autoSaveTimeout = setTimeout(() => {
+                saveSession();
+                updatePerformanceInfo(`Auto-saved ${sessionData.modifiedNodes.size} modifications`);
+            }, AUTO_SAVE_DELAY);
+        }
+        
+        function updateAutoSaveIndicator(status) {
+            const indicator = document.getElementById('autoSaveIndicator');
+            if (!indicator) return;
+            
+            const indicators = {
+                'saving': '💾 Saving...',
+                'saved': '✅ Saved',
+                'error': '❌ Save Error'
+            };
+            
+            indicator.textContent = indicators[status] || '';
+            indicator.className = `auto-save-indicator ${status}`;
+        }
+        
+        function updateNodeVisualState(nodeId) {
+            const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+            if (!nodeElement) return;
+            
+            const node = flatNodesMap.get(nodeId);
+            if (node && node.renamed) {
+                nodeElement.classList.add('node-renamed');
+                
+                // Add renamed indicator if not present
+                const content = nodeElement.querySelector('.node-content');
+                if (content && !content.querySelector('.renamed-indicator')) {
+                    const indicator = document.createElement('span');
+                    indicator.className = 'renamed-indicator';
+                    indicator.textContent = '✏️';
+                    indicator.title = 'This node has been renamed';
+                    content.appendChild(indicator);
+                }
+            }
+        }
+        
+        function getModificationStats() {
+            return {
+                totalModifications: sessionData.modifiedNodes.size,
+                lastSaved: sessionData.lastSaved,
+                hasUnsavedChanges: autoSaveTimeout !== null
+            };
+        }
+        
+        function clearSession() {
+            localStorage.removeItem('organigram_session');
+            sessionData.originalData = null;
+            sessionData.modifiedNodes.clear();
+            sessionData.lastSaved = null;
+            updatePerformanceInfo('Session cleared');
+        }
 
         // File handling
         function showImportSection() {
@@ -722,6 +936,9 @@
             flatNodesMap.clear();
             renderedNodes.clear();
             totalNodes = 0;
+            
+            // Clear session data
+            clearSession();
             
             document.getElementById('tree').innerHTML = '';
             document.getElementById('tree').style.display = 'none';
@@ -819,6 +1036,9 @@
                     throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
                 }
 
+                // Check if renamed column exists
+                const hasRenamedColumn = headers.includes('renamed');
+
                 updateProgress(50, 'Processing nodes...');
 
                 const nodes = {};
@@ -837,6 +1057,9 @@
                     const pid = cleanField(row.pid);
                     const name = cleanField(row.name);
                     const level = cleanField(row.level);
+                    const renamed = hasRenamedColumn ? 
+                        (cleanField(row.renamed) === 'TRUE' || cleanField(row.renamed) === 'true') : 
+                        false;
 
                     if (!nodeId || !name) continue;
 
@@ -845,6 +1068,7 @@
                         name: name,
                         pid: pid,
                         level: level || 'unknown',
+                        renamed: renamed,
                         children: []
                     };
 
@@ -874,6 +1098,9 @@
 
                 nodesData = hierarchy;
                 buildFlatNodeMap(nodesData);
+                
+                // Initialize session for auto-save
+                initializeSession(nodesData);
                 
                 updateProgress(100, 'Complete!');
                 
@@ -993,17 +1220,17 @@
         }
 
         function downloadSample() {
-            const sampleCSV = `name,id,pid,level
-"Company","1",,"l1"
-"Engineering","2","1","l2"
-"Product","3","1","l2"
-"Frontend Team","4","2","l3"
-"Backend Team","5","2","l3"
-"Design Team","6","3","l3"
-"John Doe","7","4","l4"
-"Jane Smith","8","4","l4"
-"Bob Wilson","9","5","l4"
-"Alice Johnson","10","6","l4"`;
+            const sampleCSV = `name,id,pid,level,renamed
+"Company","1",,"l1","FALSE"
+"Engineering","2","1","l2","FALSE"
+"Product","3","1","l2","FALSE"
+"Frontend Team","4","2","l3","FALSE"
+"Backend Team","5","2","l3","FALSE"
+"Design Team","6","3","l3","FALSE"
+"John Doe","7","4","l4","FALSE"
+"Jane Smith","8","4","l4","FALSE"
+"Bob Wilson","9","5","l4","FALSE"
+"Alice Johnson","10","6","l4","FALSE"`;
 
             const blob = new Blob([sampleCSV], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -1061,16 +1288,25 @@
                 return;
             }
             
-            // Update the node data
+            // Get the current node data
             const node = flatNodesMap.get(nodeId);
             if (node) {
-                node.name = newName;
+                const oldName = node.name;
                 
-                // Update the display
-                const label = input.parentElement;
-                label.textContent = newName;
-                
-                updatePerformanceInfo(`Updated node: ${nodeId} -> "${newName}"`);
+                // Only mark as renamed if the name actually changed
+                if (oldName !== newName) {
+                    markNodeAsRenamed(nodeId, newName, oldName);
+                    
+                    // Update the display
+                    const label = input.parentElement;
+                    label.textContent = newName;
+                    
+                    updatePerformanceInfo(`Updated node: ${nodeId} -> "${newName}" (Auto-saved)`);
+                } else {
+                    // Just update display without marking as renamed
+                    const label = input.parentElement;
+                    label.textContent = newName;
+                }
             }
         }
 
@@ -1110,15 +1346,16 @@
         }
 
         function generateCSVFromNodes() {
-            const rows = ['name,id,pid,level'];
+            const rows = ['name,id,pid,level,renamed'];
             
             function addNodeToCSV(node) {
                 const name = `"${node.name.replace(/"/g, '""')}"`;
                 const id = `"${node.id}"`;
                 const pid = node.pid ? `"${node.pid}"` : '';
                 const level = `"${node.level}"`;
+                const renamed = node.renamed ? 'TRUE' : 'FALSE';
                 
-                rows.push(`${name},${id},${pid},${level}`);
+                rows.push(`${name},${id},${pid},${level},${renamed}`);
                 
                 if (node.children && node.children.length > 0) {
                     node.children.forEach(child => addNodeToCSV(child));
@@ -1446,6 +1683,17 @@
             nodeContent.appendChild(toggleBtn);
             nodeContent.appendChild(label);
             nodeContent.appendChild(editIndicator);
+            
+            // Add renamed indicator if node was renamed
+            if (node.renamed) {
+                const renamedIndicator = document.createElement('span');
+                renamedIndicator.className = 'renamed-indicator';
+                renamedIndicator.textContent = '✏️';
+                renamedIndicator.title = 'This node has been renamed';
+                nodeContent.appendChild(renamedIndicator);
+                nodeDiv.classList.add('node-renamed');
+            }
+            
             nodeContent.appendChild(info);
             nodeDiv.appendChild(nodeContent);
             
