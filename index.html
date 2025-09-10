@@ -578,27 +578,31 @@
 
     <div class="toolbar">
         <div class="toolbar-section">
-            <button class="btn primary" onclick="showImportSection()">📁 Import New File</button>
-            <button class="btn" onclick="clearData()">🗑️ Clear Data</button>
-            <button class="btn" onclick="exportToCSV()">💾 Export CSV</button>
-            <button class="btn" onclick="toggleEditMode()">✏️ Edit Mode</button>
-            <button class="btn" onclick="toggleDuplicateDetection()">🔍 Find Duplicates</button>
+            <button class="btn primary" onclick="showImportSection()">📁 Import CSV File</button>
+            <button class="btn" onclick="clearData()" id="clearBtn" disabled>🗑️ Clear Data</button>
+            <button class="btn" onclick="exportToCSV()" id="exportBtn" disabled>💾 Export CSV</button>
+            <button class="btn" onclick="toggleEditMode()" id="editBtn" disabled>✏️ Edit Mode</button>
+            <button class="btn" onclick="toggleDuplicateDetection()" id="duplicateBtn" disabled>🔍 Find Duplicates</button>
             <button class="btn" onclick="showHelpModal()">❓ Help</button>
             <button class="btn" onclick="downloadSample()">📥 Sample CSV</button>
-            <button class="btn" onclick="expandLevel(1)" id="expandL1">Show L1</button>
-            <button class="btn" onclick="expandLevel(2)" id="expandL2">Show L1-2</button>
-            <button class="btn" onclick="collapseAll()" id="collapseBtn">Collapse All</button>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..." oninput="searchNodes()">
-            <button class="btn" onclick="clearSearch()">Clear</button>
+            <button class="btn" onclick="expandLevel(1)" id="expandL1" disabled>Show L1</button>
+            <button class="btn" onclick="expandLevel(2)" id="expandL2" disabled>Show L1-2</button>
+            <button class="btn" onclick="collapseAll()" id="collapseBtn" disabled>Collapse All</button>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..." oninput="searchNodes()" disabled>
+            <button class="btn" onclick="clearSearch()" id="clearSearchBtn" disabled>Clear</button>
         </div>
     </div>
 
     <div class="import-section" id="importSection">
         <div class="file-drop-area" onclick="triggerFileInput()">
             <h3>📁 Import Your Data</h3>
-            <p>Click here or drag & drop your CSV or Excel file</p>
+            <p>Click here or drag & drop your CSV or Excel file to get started</p>
             <p><small>Required columns: name, id, pid, level</small></p>
             <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileSelect(event)">
+        </div>
+        <div style="text-align: center; margin-top: 15px;">
+            <button class="btn" onclick="showHelpModal()" style="margin-right: 10px;">❓ Need Help?</button>
+            <button class="btn" onclick="downloadSample()">📥 Download Sample CSV</button>
         </div>
     </div>
 
@@ -619,7 +623,18 @@
     </div>
 
     <div class="tree-container">
-        <div id="loading" class="loading">Load a file to get started or use the default data</div>
+        <div id="loading" class="loading">
+            <h3>🌳 Welcome to Interactive Organigram</h3>
+            <p>Import a CSV file above to visualize your hierarchical data with powerful features:</p>
+            <ul style="text-align: left; display: inline-block; margin-top: 20px;">
+                <li>📁 <strong>CSV Import/Export</strong> - Drag & drop or browse files</li>
+                <li>✏️ <strong>Inline Editing</strong> - Click any node name to edit</li>
+                <li>🔍 <strong>Duplicate Detection</strong> - Find and navigate duplicates</li>
+                <li>🎯 <strong>Interactive Navigation</strong> - Expand/collapse hierarchy</li>
+                <li>📱 <strong>Mobile Responsive</strong> - Works on all devices</li>
+            </ul>
+            <p style="margin-top: 20px;"><strong>Get started by importing your CSV file above!</strong></p>
+        </div>
         <div id="error" class="error" style="display: none;"></div>
         <div id="tree" class="tree" style="display: none;"></div>
     </div>
@@ -712,11 +727,22 @@
             document.getElementById('tree').style.display = 'none';
             document.getElementById('statsGrid').innerHTML = '';
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading').innerHTML = 'Data cleared. Import a file to get started.';
             document.getElementById('error').style.display = 'none';
             document.getElementById('performanceInfo').style.display = 'none';
             
+            // Reset duplicate detection
+            if (duplicateDetectionActive) {
+                toggleDuplicateDetection();
+            }
+            
+            // Reset edit mode
+            if (editMode) {
+                toggleEditMode();
+            }
+            
             showImportSection();
+            updatePerformanceInfo('Data cleared - Please import a CSV file to get started');
+            updateToolbarState(false); // Disable data-dependent buttons
         }
 
         function handleFileSelect(event) {
@@ -858,7 +884,8 @@
                     renderTree();
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('tree').style.display = 'block';
-                    updatePerformanceInfo(`Imported ${totalNodes.toLocaleString()} nodes successfully`);
+                    updatePerformanceInfo(`Successfully imported ${totalNodes.toLocaleString()} nodes`);
+                    updateToolbarState(true); // Enable all buttons after successful import
                 }, 1000);
 
             } catch (error) {
@@ -991,6 +1018,11 @@
 
         // Edit Mode Functions
         function toggleEditMode() {
+            if (nodesData.length === 0) {
+                alert('No data loaded. Please import a CSV file first.');
+                return;
+            }
+            
             editMode = !editMode;
             const button = event.target;
             const treeContainer = document.getElementById('tree');
@@ -1058,7 +1090,7 @@
         // Export Functions
         function exportToCSV() {
             if (nodesData.length === 0) {
-                alert('No data to export. Please import a file first.');
+                alert('No data to export. Please import a CSV file first.');
                 return;
             }
             
@@ -1099,6 +1131,11 @@
 
         // Duplicate Detection Functions
         function toggleDuplicateDetection() {
+            if (nodesData.length === 0) {
+                alert('No data loaded. Please import a CSV file first.');
+                return;
+            }
+            
             duplicateDetectionActive = !duplicateDetectionActive;
             const button = event.target;
             
@@ -1557,24 +1594,34 @@
 
         // Try to load default data on startup
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const response = await fetch('nodes_hierarchy.json');
-                if (response.ok) {
-                    const data = await response.json();
-                    nodesData = data;
-                    buildFlatNodeMap(nodesData);
-                    displayStats();
-                    renderTree();
-                    // Don't hide import section - keep it available for new imports
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('tree').style.display = 'block';
-                    updatePerformanceInfo(`Loaded ${totalNodes.toLocaleString()} nodes from default file`);
-                }
-            } catch (error) {
-                // No default file, show import section
-                console.log('No default data file found, showing import section');
-            }
+            // Don't load default data - force user to import CSV
+            console.log('Interactive Organigram loaded - please import a CSV file to begin');
+            updatePerformanceInfo('Ready - Please import a CSV file to get started');
+            updateToolbarState(false); // Disable data-dependent buttons
         });
+
+        // Update toolbar button states based on whether data is loaded
+        function updateToolbarState(hasData) {
+            const buttons = ['clearBtn', 'exportBtn', 'editBtn', 'duplicateBtn', 'expandL1', 'expandL2', 'collapseBtn', 'clearSearchBtn'];
+            const searchInput = document.getElementById('searchInput');
+            
+            buttons.forEach(buttonId => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    button.disabled = !hasData;
+                }
+            });
+            
+            if (searchInput) {
+                searchInput.disabled = !hasData;
+                if (!hasData) {
+                    searchInput.value = '';
+                    searchInput.placeholder = 'Import data to enable search...';
+                } else {
+                    searchInput.placeholder = 'Search nodes...';
+                }
+            }
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(event) {
