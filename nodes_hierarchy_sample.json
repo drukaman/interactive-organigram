@@ -1,0 +1,152 @@
+[
+  {
+    "id": "1",
+    "name": "Technology Stack",
+    "pid": null,
+    "level": "l1",
+    "children": [
+      {
+        "id": "2",
+        "name": "Frontend",
+        "pid": "1",
+        "level": "l2",
+        "children": [
+          {
+            "id": "5",
+            "name": "React.js",
+            "pid": "2",
+            "level": "l3",
+            "children": [
+              {
+                "id": "14",
+                "name": "React Components",
+                "pid": "5",
+                "level": "l4",
+                "children": []
+              },
+              {
+                "id": "15",
+                "name": "React Hooks",
+                "pid": "5",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "6",
+            "name": "Vue.js",
+            "pid": "2",
+            "level": "l3",
+            "children": [
+              {
+                "id": "16",
+                "name": "Vue Components",
+                "pid": "6",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "7",
+            "name": "HTML/CSS",
+            "pid": "2",
+            "level": "l3",
+            "children": [
+              {
+                "id": "17",
+                "name": "Responsive Design",
+                "pid": "7",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Backend",
+        "pid": "1",
+        "level": "l2",
+        "children": [
+          {
+            "id": "8",
+            "name": "Node.js",
+            "pid": "3",
+            "level": "l3",
+            "children": [
+              {
+                "id": "18",
+                "name": "Express.js",
+                "pid": "8",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "9",
+            "name": "Python",
+            "pid": "3",
+            "level": "l3",
+            "children": [
+              {
+                "id": "19",
+                "name": "FastAPI",
+                "pid": "9",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "10",
+            "name": "Java",
+            "pid": "3",
+            "level": "l3",
+            "children": [
+              {
+                "id": "20",
+                "name": "Spring Boot",
+                "pid": "10",
+                "level": "l4",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "Database",
+        "pid": "1",
+        "level": "l2",
+        "children": [
+          {
+            "id": "11",
+            "name": "PostgreSQL",
+            "pid": "4",
+            "level": "l3",
+            "children": []
+          },
+          {
+            "id": "12",
+            "name": "MongoDB",
+            "pid": "4",
+            "level": "l3",
+            "children": []
+          },
+          {
+            "id": "13",
+            "name": "Redis",
+            "pid": "4",
+            "level": "l3",
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

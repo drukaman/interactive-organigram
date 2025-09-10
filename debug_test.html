@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+</head>
+
+<body>
+    <h1>Debug Test</h1>
+    <div id="status">Loading...</div>
+    <div id="data"></div>
+    <div id="errors" style="color: red;"></div>
+
+    <script>
+        console.log('Starting debug test...');
+
+        async function testLoad() {
+            try {
+                console.log('Attempting to fetch nodes_hierarchy.json...');
+                const response = await fetch('nodes_hierarchy.json');
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                console.log('Parsing JSON...');
+                const data = await response.json();
+                console.log('Data loaded successfully');
+                console.log('Root nodes count:', data.length);
+                console.log('First node:', data[0]);
+
+                document.getElementById('status').innerHTML = '✅ Success!';
+                document.getElementById('data').innerHTML = `
+                    <h3>Data Summary:</h3>
+                    <p>Root nodes: ${data.length}</p>
+                    <p>First node: ${data[0].name} (ID: ${data[0].id})</p>
+                    <p>First node children: ${data[0].children ? data[0].children.length : 0}</p>
+                `;
+
+            } catch (error) {
+                console.error('Error occurred:', error);
+                document.getElementById('status').innerHTML = '❌ Error occurred';
+                document.getElementById('errors').innerHTML = `
+                    <h3>Error Details:</h3>
+                    <p>${error.message}</p>
+                    <p>Check browser console for more details</p>
+                `;
+            }
+        }
+
+        // Add error event listeners
+        window.addEventListener('error', function (e) {
+            console.error('Global error:', e.error);
+            document.getElementById('errors').innerHTML += `<p>Global error: ${e.error.message}</p>`;
+        });
+
+        window.addEventListener('unhandledrejection', function (e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            document.getElementById('errors').innerHTML += `<p>Promise rejection: ${e.reason}</p>`;
+        });
+
+        // Run test
+        testLoad();
+    </script>
+</body>
+
+</html>

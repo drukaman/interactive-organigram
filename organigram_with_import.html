@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Organigram with Import</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 80px; /* Space for fixed toolbar only */
+            margin: 0;
+        }
+
+        .toolbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            border-bottom: 1px solid #e9ecef;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 0;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .toolbar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #333333;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+            border-color: #999999;
+        }
+
+        .btn:disabled {
+            background: #f8f8f8;
+            color: #cccccc;
+            cursor: not-allowed;
+            border-color: #e0e0e0;
+        }
+
+        .btn.primary {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .btn.primary:hover {
+            background: #0056b3;
+            border-color: #004085;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 350px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #999999;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+        }
+
+        .import-section {
+            background: white;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px dashed #cccccc;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .import-section.dragover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .import-section.hidden {
+            display: none;
+        }
+
+        .import-section.minimized {
+            padding: 10px 20px;
+            margin: 10px 20px;
+            border: 1px solid #e0e0e0;
+            border-style: solid;
+        }
+
+        .import-section.minimized .file-drop-area {
+            padding: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-drop-area {
+            padding: 40px;
+            cursor: pointer;
+        }
+
+        .file-drop-area:hover {
+            background: #f8f9fa;
+        }
+
+        .import-progress {
+            margin: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        .tree-container {
+            background: white;
+            margin: 20px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            min-height: 70vh;
+        }
+
+        .tree {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 13px;
+        }
+
+        .node {
+            margin: 1px 0;
+            position: relative;
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .node-content:hover {
+            background-color: #f5f5f5;
+            transform: translateX(2px);
+            border-color: #cccccc;
+        }
+
+        .node-content.highlighted {
+            background: #f0f0f0;
+            border-color: #999999;
+        }
+
+        .toggle-btn {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #cccccc;
+            background: #ffffff;
+            color: #333333;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #f5f5f5;
+            border-color: #999999;
+        }
+
+        .toggle-btn.no-children {
+            background: #f8f8f8;
+            color: #cccccc;
+            cursor: default;
+            border-color: #e0e0e0;
+        }
+
+        .node-label {
+            flex: 1;
+            font-weight: 500;
+            margin-right: 8px;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .node-label.editable {
+            cursor: text;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .node-label.editable:hover {
+            background-color: #f0f0f0;
+        }
+
+        .node-label input {
+            border: none;
+            background: transparent;
+            font: inherit;
+            color: inherit;
+            width: 100%;
+            outline: none;
+        }
+
+        .edit-indicator {
+            display: none;
+            color: #999;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .edit-mode .edit-indicator {
+            display: inline;
+        }
+
+        .edit-mode .node-label.editable {
+            background-color: #f8f8f8;
+            border: 1px dashed #ccc;
+        }
+
+        .node-duplicate {
+            background-color: #fff3cd !important;
+            border-color: #ffc107 !important;
+            position: relative;
+        }
+
+        .node-duplicate::before {
+            content: "⚠️";
+            position: absolute;
+            right: 4px;
+            top: 4px;
+            font-size: 10px;
+            color: #856404;
+        }
+
+        .duplicate-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #e0e0e0;
+            z-index: 200;
+            display: none;
+        }
+
+        .duplicate-panel-header {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .duplicate-panel-header h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .duplicate-panel-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .duplicate-panel-close:hover {
+            color: #333;
+        }
+
+        .duplicate-panel-content {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .duplicate-group {
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .duplicate-group-header {
+            padding: 8px 12px;
+            background: #e9ecef;
+            font-weight: 600;
+            font-size: 12px;
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .duplicate-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .duplicate-item:last-child {
+            border-bottom: none;
+        }
+
+        .duplicate-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .duplicate-item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .duplicate-item-path {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .node-info {
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 3px;
+            background: #f5f5f5;
+            color: #666666;
+        }
+
+        .children {
+            margin-left: 28px;
+            border-left: 1px solid #e0e0e0;
+            padding-left: 16px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .children.collapsed {
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .children.expanded {
+            max-height: none;
+        }
+
+        .level-l1 .node-content {
+            background: #f8f8f8;
+            color: #333333;
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid #cccccc;
+            padding: 8px 12px;
+        }
+
+        .level-l2 .node-content {
+            background: #f5f5f5;
+            color: #333333;
+            font-weight: 600;
+            border: 1px solid #d0d0d0;
+            font-size: 13px;
+        }
+
+        .level-l3 .node-content {
+            background: #f9f9f9;
+            color: #333333;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+
+        .level-l4 .node-content {
+            background: #ffffff;
+            color: #666666;
+            border: 1px solid #e5e5e5;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #d32f2f;
+            background: #ffffff;
+            border-radius: 8px;
+            margin: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .performance-info {
+            background: #f8f8f8;
+            color: #333333;
+            padding: 10px 20px;
+            margin: 20px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .search-input {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            body {
+                padding-top: 120px; /* More space for wrapped toolbar on mobile */
+            }
+            
+            .toolbar {
+                padding: 10px 15px;
+            }
+            
+            .toolbar-section {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="toolbar">
+        <div class="toolbar-section">
+            <button class="btn primary" onclick="showImportSection()">📁 Import New File</button>
+            <button class="btn" onclick="clearData()">🗑️ Clear Data</button>
+            <button class="btn" onclick="exportToCSV()">💾 Export CSV</button>
+            <button class="btn" onclick="toggleEditMode()">✏️ Edit Mode</button>
+            <button class="btn" onclick="toggleDuplicateDetection()">🔍 Find Duplicates</button>
+            <button class="btn" onclick="showHelpModal()">❓ Help</button>
+            <button class="btn" onclick="downloadSample()">📥 Sample CSV</button>
+            <button class="btn" onclick="expandLevel(1)" id="expandL1">Show L1</button>
+            <button class="btn" onclick="expandLevel(2)" id="expandL2">Show L1-2</button>
+            <button class="btn" onclick="collapseAll()" id="collapseBtn">Collapse All</button>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..." oninput="searchNodes()">
+            <button class="btn" onclick="clearSearch()">Clear</button>
+        </div>
+    </div>
+
+    <div class="import-section" id="importSection">
+        <div class="file-drop-area" onclick="triggerFileInput()">
+            <h3>📁 Import Your Data</h3>
+            <p>Click here or drag & drop your CSV or Excel file</p>
+            <p><small>Required columns: name, id, pid, level</small></p>
+            <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileSelect(event)">
+        </div>
+    </div>
+
+    <div class="import-progress" id="importProgress">
+        <h4>Processing File...</h4>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div id="progressText">Starting import...</div>
+    </div>
+
+    <div class="performance-info" id="performanceInfo" style="display: none;">
+        <!-- Performance metrics will be shown here -->
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+        <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <div class="tree-container">
+        <div id="loading" class="loading">Load a file to get started or use the default data</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="tree" class="tree" style="display: none;"></div>
+    </div>
+
+    <!-- Duplicate Detection Panel -->
+    <div id="duplicatePanel" class="duplicate-panel">
+        <div class="duplicate-panel-header">
+            <h3>🔍 Duplicate Nodes</h3>
+            <button class="duplicate-panel-close" onclick="closeDuplicatePanel()">×</button>
+        </div>
+        <div class="duplicate-panel-content" id="duplicateContent">
+            <!-- Duplicate groups will be populated here -->
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 File Format Requirements</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div>
+                <h4>Required Columns:</h4>
+                <ul>
+                    <li><strong>name</strong> - Node name/description</li>
+                    <li><strong>id</strong> - Unique identifier</li>
+                    <li><strong>pid</strong> - Parent ID (NULL/empty for root nodes)</li>
+                    <li><strong>level</strong> - Hierarchical level (l1, l2, l3, l4)</li>
+                </ul>
+                
+                <h4>Example CSV:</h4>
+                <pre>name,id,pid,level
+"Company","1",NULL,"l1"
+"Engineering","2","1","l2"
+"Frontend Team","3","2","l3"
+"John Doe","4","3","l4"</pre>
+                
+                <h4>Editing Features:</h4>
+                <ul>
+                    <li><strong>Edit Mode</strong> - Click "✏️ Edit Mode" to enable label editing</li>
+                    <li><strong>Click Labels</strong> - Click any node name to edit it</li>
+                    <li><strong>Save Changes</strong> - Press Enter or click away to save</li>
+                    <li><strong>Export CSV</strong> - Download your edited data as CSV</li>
+                </ul>
+                
+                <h4>Duplicate Detection:</h4>
+                <ul>
+                    <li><strong>Find Duplicates</strong> - Click "🔍 Find Duplicates" to scan for duplicate names</li>
+                    <li><strong>Highlighting</strong> - Duplicate nodes are highlighted with yellow background</li>
+                    <li><strong>Navigation Panel</strong> - Bottom-right panel shows all duplicates</li>
+                    <li><strong>Click to Navigate</strong> - Click duplicate items to scroll to their location</li>
+                </ul>
+                
+                <h4>Supported Formats:</h4>
+                <ul>
+                    <li>CSV files (.csv)</li>
+                    <li>Excel files (.xlsx, .xls)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let nodesData = [];
+        let flatNodesMap = new Map();
+        let renderedNodes = new Set();
+        let searchTerm = '';
+        let loadingStartTime = Date.now();
+        let totalNodes = 0;
+        let editMode = false;
+        let originalFileName = 'organigram_data';
+        let duplicateDetectionActive = false;
+        let duplicateGroups = new Map();
+
+        // File handling
+        function showImportSection() {
+            const importSection = document.getElementById('importSection');
+            importSection.classList.remove('hidden');
+            importSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearData() {
+            nodesData = [];
+            flatNodesMap.clear();
+            renderedNodes.clear();
+            totalNodes = 0;
+            
+            document.getElementById('tree').innerHTML = '';
+            document.getElementById('tree').style.display = 'none';
+            document.getElementById('statsGrid').innerHTML = '';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').innerHTML = 'Data cleared. Import a file to get started.';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('performanceInfo').style.display = 'none';
+            
+            showImportSection();
+        }
+
+        function handleFileSelect(event) {
+            console.log('File select event triggered');
+            const file = event.target.files[0];
+            if (file) {
+                console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
+                processFile(file);
+            } else {
+                console.log('No file selected');
+            }
+        }
+
+        function triggerFileInput() {
+            console.log('Triggering file input click');
+            document.getElementById('fileInput').click();
+        }
+
+        function processFile(file) {
+            console.log('Processing file:', file.name);
+            originalFileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+            const fileName = file.name;
+            const fileExt = fileName.split('.').pop().toLowerCase();
+            
+            if (!['csv', 'xlsx', 'xls'].includes(fileExt)) {
+                showError('Unsupported file format. Please use CSV or Excel files.');
+                return;
+            }
+
+            showProgress(true);
+            updateProgress(10, 'Reading file...');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    console.log('File read successfully, size:', e.target.result.length);
+                    if (fileExt === 'csv') {
+                        processCSV(e.target.result);
+                    } else {
+                        showError('Excel files require server-side processing. Please convert to CSV format.');
+                        showProgress(false);
+                    }
+                } catch (error) {
+                    console.error('Error processing file:', error);
+                    showError(`Error processing file: ${error.message}`);
+                    showProgress(false);
+                }
+            };
+
+            reader.onerror = function() {
+                console.error('Error reading file');
+                showError('Error reading file. Please try again.');
+                showProgress(false);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function processCSV(csvText) {
+            try {
+                updateProgress(30, 'Parsing CSV data...');
+                
+                const lines = csvText.split('\n').filter(line => line.trim());
+                if (lines.length < 2) {
+                    throw new Error('CSV file appears to be empty or invalid');
+                }
+
+                const headers = parseCSVLine(lines[0]);
+                const requiredColumns = ['name', 'id', 'pid', 'level'];
+                
+                // Validate headers
+                const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+                if (missingColumns.length > 0) {
+                    throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
+                }
+
+                updateProgress(50, 'Processing nodes...');
+
+                const nodes = {};
+                const childrenMap = new Map();
+
+                for (let i = 1; i < lines.length; i++) {
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length !== headers.length) continue;
+
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index];
+                    });
+
+                    const nodeId = cleanField(row.id);
+                    const pid = cleanField(row.pid);
+                    const name = cleanField(row.name);
+                    const level = cleanField(row.level);
+
+                    if (!nodeId || !name) continue;
+
+                    nodes[nodeId] = {
+                        id: nodeId,
+                        name: name,
+                        pid: pid,
+                        level: level || 'unknown',
+                        children: []
+                    };
+
+                    if (pid) {
+                        if (!childrenMap.has(pid)) {
+                            childrenMap.set(pid, []);
+                        }
+                        childrenMap.get(pid).push(nodeId);
+                    }
+                }
+
+                updateProgress(70, 'Building hierarchy...');
+
+                // Add children to nodes
+                for (const [parentId, childIds] of childrenMap) {
+                    if (nodes[parentId]) {
+                        nodes[parentId].children = childIds.map(id => nodes[id]).filter(Boolean);
+                    }
+                }
+
+                updateProgress(90, 'Finalizing...');
+
+                // Create hierarchy
+                const hierarchy = Object.values(nodes)
+                    .filter(node => !node.pid)
+                    .map(rootNode => buildTree(rootNode, nodes));
+
+                nodesData = hierarchy;
+                buildFlatNodeMap(nodesData);
+                
+                updateProgress(100, 'Complete!');
+                
+                setTimeout(() => {
+                    showProgress(false);
+                    hideImportSection();
+                    displayStats();
+                    renderTree();
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('tree').style.display = 'block';
+                    updatePerformanceInfo(`Imported ${totalNodes.toLocaleString()} nodes successfully`);
+                }, 1000);
+
+            } catch (error) {
+                showError(`Error processing CSV: ${error.message}`);
+                showProgress(false);
+            }
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                const nextChar = line[i + 1];
+                
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        current += '"';
+                        i++; // Skip next quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current);
+            return result;
+        }
+
+        function cleanField(field) {
+            if (!field || field === 'NULL' || field === '') {
+                return null;
+            }
+            return String(field).trim().replace(/^["']|["']$/g, '');
+        }
+
+        function buildTree(node, allNodes) {
+            const result = { ...node };
+            result.children = node.children.map(child => buildTree(child, allNodes));
+            return result;
+        }
+
+        function hideImportSection() {
+            document.getElementById('importSection').classList.add('hidden');
+        }
+
+        function showProgress(show) {
+            const progress = document.getElementById('importProgress');
+            progress.style.display = show ? 'block' : 'none';
+            if (!show) {
+                updateProgress(0, '');
+            }
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressFill').style.width = `${percent}%`;
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = `<h3>⚠️ Error</h3><p>${message}</p>`;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('tree').style.display = 'none';
+        }
+
+        // Drag and drop
+        const importSection = document.getElementById('importSection');
+        
+        importSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            importSection.classList.add('dragover');
+        });
+
+        importSection.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            importSection.classList.remove('dragover');
+        });
+
+        importSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            importSection.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        });
+
+        // Modal functions
+        function showHelpModal() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        function downloadSample() {
+            const sampleCSV = `name,id,pid,level
+"Company","1",,"l1"
+"Engineering","2","1","l2"
+"Product","3","1","l2"
+"Frontend Team","4","2","l3"
+"Backend Team","5","2","l3"
+"Design Team","6","3","l3"
+"John Doe","7","4","l4"
+"Jane Smith","8","4","l4"
+"Bob Wilson","9","5","l4"
+"Alice Johnson","10","6","l4"`;
+
+            const blob = new Blob([sampleCSV], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sample_organigram.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Edit Mode Functions
+        function toggleEditMode() {
+            editMode = !editMode;
+            const button = event.target;
+            const treeContainer = document.getElementById('tree');
+            
+            if (editMode) {
+                button.textContent = '✅ Save Mode';
+                button.classList.add('primary');
+                treeContainer.classList.add('edit-mode');
+                updatePerformanceInfo('Edit mode enabled - Click on any label to edit');
+            } else {
+                button.textContent = '✏️ Edit Mode';
+                button.classList.remove('primary');
+                treeContainer.classList.remove('edit-mode');
+                updatePerformanceInfo('Edit mode disabled');
+            }
+        }
+
+        function makeNodeEditable(nodeElement, node) {
+            if (!editMode) return;
+            
+            const label = nodeElement.querySelector('.node-label');
+            if (label.querySelector('input')) return; // Already editing
+            
+            const currentText = label.textContent;
+            label.innerHTML = `<input type="text" value="${currentText}" onblur="saveNodeEdit(this, '${node.id}')" onkeypress="handleEditKeypress(event, this, '${node.id}')">`;
+            
+            const input = label.querySelector('input');
+            input.focus();
+            input.select();
+        }
+
+        function saveNodeEdit(input, nodeId) {
+            const newName = input.value.trim();
+            if (newName === '') {
+                input.focus();
+                return;
+            }
+            
+            // Update the node data
+            const node = flatNodesMap.get(nodeId);
+            if (node) {
+                node.name = newName;
+                
+                // Update the display
+                const label = input.parentElement;
+                label.textContent = newName;
+                
+                updatePerformanceInfo(`Updated node: ${nodeId} -> "${newName}"`);
+            }
+        }
+
+        function handleEditKeypress(event, input, nodeId) {
+            if (event.key === 'Enter') {
+                input.blur();
+            } else if (event.key === 'Escape') {
+                // Restore original value
+                const node = flatNodesMap.get(nodeId);
+                if (node) {
+                    const label = input.parentElement;
+                    label.textContent = node.name;
+                }
+            }
+        }
+
+        // Export Functions
+        function exportToCSV() {
+            if (nodesData.length === 0) {
+                alert('No data to export. Please import a file first.');
+                return;
+            }
+            
+            const csvContent = generateCSVFromNodes();
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${originalFileName}_edited.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            updatePerformanceInfo(`Exported ${totalNodes} nodes to CSV`);
+        }
+
+        function generateCSVFromNodes() {
+            const rows = ['name,id,pid,level'];
+            
+            function addNodeToCSV(node) {
+                const name = `"${node.name.replace(/"/g, '""')}"`;
+                const id = `"${node.id}"`;
+                const pid = node.pid ? `"${node.pid}"` : '';
+                const level = `"${node.level}"`;
+                
+                rows.push(`${name},${id},${pid},${level}`);
+                
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(child => addNodeToCSV(child));
+                }
+            }
+            
+            nodesData.forEach(rootNode => addNodeToCSV(rootNode));
+            return rows.join('\n');
+        }
+
+        // Duplicate Detection Functions
+        function toggleDuplicateDetection() {
+            duplicateDetectionActive = !duplicateDetectionActive;
+            const button = event.target;
+            
+            if (duplicateDetectionActive) {
+                button.textContent = '✅ Hide Duplicates';
+                button.classList.add('primary');
+                findAndHighlightDuplicates();
+                showDuplicatePanel();
+                updatePerformanceInfo('Duplicate detection enabled');
+            } else {
+                button.textContent = '🔍 Find Duplicates';
+                button.classList.remove('primary');
+                clearDuplicateHighlights();
+                closeDuplicatePanel();
+                updatePerformanceInfo('Duplicate detection disabled');
+            }
+        }
+
+        function findAndHighlightDuplicates() {
+            duplicateGroups.clear();
+            
+            // Group nodes by parent and name
+            const parentGroups = new Map();
+            
+            flatNodesMap.forEach((node, nodeId) => {
+                const parentId = node.pid || 'ROOT';
+                const nodeName = node.name.toLowerCase().trim();
+                
+                if (!parentGroups.has(parentId)) {
+                    parentGroups.set(parentId, new Map());
+                }
+                
+                const parentGroup = parentGroups.get(parentId);
+                if (!parentGroup.has(nodeName)) {
+                    parentGroup.set(nodeName, []);
+                }
+                
+                parentGroup.get(nodeName).push(node);
+            });
+            
+            // Find duplicates within each parent group
+            parentGroups.forEach((nameGroups, parentId) => {
+                nameGroups.forEach((nodes, nodeName) => {
+                    if (nodes.length > 1) {
+                        const parentNode = flatNodesMap.get(parentId) || { name: 'Root Level' };
+                        const groupKey = `${parentId}_${nodeName}`;
+                        duplicateGroups.set(groupKey, {
+                            parentName: parentNode.name,
+                            nodeName: nodes[0].name, // Original case
+                            nodes: nodes
+                        });
+                    }
+                });
+            });
+            
+            // Highlight duplicate nodes
+            duplicateGroups.forEach(group => {
+                group.nodes.forEach(node => {
+                    const nodeElement = document.querySelector(`[data-id="${node.id}"] .node-content`);
+                    if (nodeElement) {
+                        nodeElement.classList.add('node-duplicate');
+                    }
+                });
+            });
+            
+            updateDuplicatePanel();
+        }
+
+        function clearDuplicateHighlights() {
+            document.querySelectorAll('.node-duplicate').forEach(element => {
+                element.classList.remove('node-duplicate');
+            });
+            duplicateGroups.clear();
+        }
+
+        function showDuplicatePanel() {
+            document.getElementById('duplicatePanel').style.display = 'block';
+        }
+
+        function closeDuplicatePanel() {
+            document.getElementById('duplicatePanel').style.display = 'none';
+        }
+
+        function updateDuplicatePanel() {
+            const content = document.getElementById('duplicateContent');
+            
+            if (duplicateGroups.size === 0) {
+                content.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No duplicates found within the same categories.</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            duplicateGroups.forEach((group, groupKey) => {
+                html += `
+                    <div class="duplicate-group">
+                        <div class="duplicate-group-header">
+                            "${group.nodeName}" in ${group.parentName} (${group.nodes.length} copies)
+                        </div>
+                `;
+                
+                group.nodes.forEach((node, index) => {
+                    const path = getNodePath(node);
+                    html += `
+                        <div class="duplicate-item" onclick="scrollToNode('${node.id}')">
+                            <div class="duplicate-item-name">${node.name} (ID: ${node.id})</div>
+                            <div class="duplicate-item-path">${path}</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            });
+            
+            content.innerHTML = html;
+        }
+
+        function getNodePath(node) {
+            const path = [];
+            let current = node;
+            
+            while (current && current.pid) {
+                const parent = flatNodesMap.get(current.pid);
+                if (parent) {
+                    path.unshift(parent.name);
+                    current = parent;
+                } else {
+                    break;
+                }
+            }
+            
+            return path.length > 0 ? path.join(' > ') : 'Root Level';
+        }
+
+        function scrollToNode(nodeId) {
+            // First expand the path to the node
+            expandPathToNode(nodeId);
+            
+            // Wait a bit for the expansion to complete, then scroll
+            setTimeout(() => {
+                const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+                if (nodeElement) {
+                    // Temporarily highlight the target node
+                    const nodeContent = nodeElement.querySelector('.node-content');
+                    nodeContent.style.transition = 'all 0.3s ease';
+                    nodeContent.style.backgroundColor = '#007bff';
+                    nodeContent.style.color = 'white';
+                    nodeContent.style.transform = 'scale(1.02)';
+                    
+                    // Scroll to the node
+                    nodeElement.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    
+                    // Remove highlight after a delay
+                    setTimeout(() => {
+                        nodeContent.style.backgroundColor = '';
+                        nodeContent.style.color = '';
+                        nodeContent.style.transform = '';
+                        
+                        // Restore duplicate highlighting if it was there
+                        if (duplicateDetectionActive) {
+                            setTimeout(() => {
+                                nodeContent.classList.add('node-duplicate');
+                            }, 300);
+                        }
+                    }, 1500);
+                    
+                    updatePerformanceInfo(`Navigated to node: ${nodeId}`);
+                }
+            }, 200);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('helpModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Performance monitoring
+        function updatePerformanceInfo(message) {
+            const perfInfo = document.getElementById('performanceInfo');
+            const elapsed = Date.now() - loadingStartTime;
+            perfInfo.innerHTML = `
+                <strong>Status:</strong> ${message} | 
+                <strong>Load Time:</strong> ${elapsed}ms | 
+                <strong>Memory:</strong> ${(performance.memory?.usedJSHeapSize / 1024 / 1024).toFixed(1) || 'N/A'} MB
+            `;
+            perfInfo.style.display = 'block';
+        }
+
+        // Build flat map for efficient lookups
+        function buildFlatNodeMap(nodes) {
+            function processNode(node) {
+                flatNodesMap.set(node.id, node);
+                totalNodes++;
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(child => processNode(child));
+                }
+            }
+            
+            totalNodes = 0;
+            flatNodesMap.clear();
+            nodes.forEach(rootNode => processNode(rootNode));
+        }
+
+        // Display statistics
+        function displayStats() {
+            const stats = calculateStats(nodesData);
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalNodes.toLocaleString()}</div>
+                    <div>Total Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.rootNodes}</div>
+                    <div>Root Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l1 || 0}</div>
+                    <div>Level 1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l2 || 0}</div>
+                    <div>Level 2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l3 || 0}</div>
+                    <div>Level 3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l4 || 0}</div>
+                    <div>Level 4</div>
+                </div>
+            `;
+        }
+
+        function calculateStats(data) {
+            const levels = {};
+            
+            flatNodesMap.forEach(node => {
+                levels[node.level] = (levels[node.level] || 0) + 1;
+            });
+
+            return {
+                totalNodes: totalNodes,
+                rootNodes: data.length,
+                levels: levels
+            };
+        }
+
+        // Render tree with lazy loading
+        function renderTree() {
+            const treeElement = document.getElementById('tree');
+            treeElement.innerHTML = '';
+            renderedNodes.clear();
+            
+            nodesData.forEach(rootNode => {
+                treeElement.appendChild(createNodeElement(rootNode, false));
+            });
+            
+            // Re-apply duplicate detection if it was active
+            if (duplicateDetectionActive) {
+                setTimeout(() => {
+                    findAndHighlightDuplicates();
+                }, 100);
+            }
+            
+            updatePerformanceInfo(`Rendered ${nodesData.length} root nodes`);
+        }
+
+        function createNodeElement(node, isExpanded = false) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = `node level-${node.level}`;
+            nodeDiv.setAttribute('data-id', node.id);
+            
+            const hasChildren = node.children && node.children.length > 0;
+            
+            const nodeContent = document.createElement('div');
+            nodeContent.className = 'node-content';
+            nodeContent.onclick = () => toggleNode(node.id);
+            
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = `toggle-btn ${hasChildren ? '' : 'no-children'}`;
+            toggleBtn.innerHTML = hasChildren ? (isExpanded ? '−' : '+') : '●';
+            
+            const label = document.createElement('span');
+            label.className = 'node-label editable';
+            label.textContent = node.name;
+            label.onclick = (e) => {
+                e.stopPropagation();
+                makeNodeEditable(nodeDiv, node);
+            };
+            
+            const editIndicator = document.createElement('span');
+            editIndicator.className = 'edit-indicator';
+            editIndicator.textContent = '✏️';
+            
+            const info = document.createElement('span');
+            info.className = 'node-info';
+            info.textContent = `${node.level} | ID: ${node.id}`;
+            if (hasChildren) {
+                info.textContent += ` | ${node.children.length} children`;
+            }
+            
+            nodeContent.appendChild(toggleBtn);
+            nodeContent.appendChild(label);
+            nodeContent.appendChild(editIndicator);
+            nodeContent.appendChild(info);
+            nodeDiv.appendChild(nodeContent);
+            
+            if (hasChildren && isExpanded) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children expanded';
+                
+                node.children.forEach(child => {
+                    childrenDiv.appendChild(createNodeElement(child, false));
+                });
+                
+                nodeDiv.appendChild(childrenDiv);
+            } else if (hasChildren) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children collapsed';
+                nodeDiv.appendChild(childrenDiv);
+            }
+            
+            renderedNodes.add(node.id);
+            return nodeDiv;
+        }
+
+        function toggleNode(nodeId) {
+            const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+            if (!nodeElement) return;
+            
+            const node = flatNodesMap.get(nodeId);
+            if (!node || !node.children || node.children.length === 0) return;
+            
+            const childrenDiv = nodeElement.querySelector('.children');
+            const toggleBtn = nodeElement.querySelector('.toggle-btn');
+            const isExpanded = childrenDiv.classList.contains('expanded');
+            
+            if (isExpanded) {
+                childrenDiv.classList.remove('expanded');
+                childrenDiv.classList.add('collapsed');
+                toggleBtn.innerHTML = '+';
+            } else {
+                if (childrenDiv.children.length === 0) {
+                    node.children.forEach(child => {
+                        childrenDiv.appendChild(createNodeElement(child, false));
+                    });
+                }
+                
+                childrenDiv.classList.remove('collapsed');
+                childrenDiv.classList.add('expanded');
+                toggleBtn.innerHTML = '−';
+            }
+        }
+
+        function expandLevel(maxLevel) {
+            collapseAll();
+            
+            document.querySelectorAll('.node').forEach(nodeElement => {
+                const nodeId = nodeElement.getAttribute('data-id');
+                const node = flatNodesMap.get(nodeId);
+                if (node) {
+                    const level = parseInt(node.level.substring(1));
+                    if (level < maxLevel && node.children && node.children.length > 0) {
+                        toggleNode(nodeId);
+                    }
+                }
+            });
+            
+            updatePerformanceInfo(`Expanded to level ${maxLevel}`);
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.children.expanded').forEach(childrenDiv => {
+                const nodeElement = childrenDiv.closest('.node');
+                const nodeId = nodeElement.getAttribute('data-id');
+                const toggleBtn = nodeElement.querySelector('.toggle-btn');
+                
+                childrenDiv.classList.remove('expanded');
+                childrenDiv.classList.add('collapsed');
+                toggleBtn.innerHTML = '+';
+            });
+            
+            updatePerformanceInfo('Collapsed all nodes');
+        }
+
+        function searchNodes() {
+            const searchInput = document.getElementById('searchInput');
+            searchTerm = searchInput.value.toLowerCase().trim();
+            
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+            
+            if (searchTerm === '') return;
+            
+            let matchCount = 0;
+            const startTime = Date.now();
+            
+            flatNodesMap.forEach((node, nodeId) => {
+                if (node.name.toLowerCase().includes(searchTerm)) {
+                    matchCount++;
+                    expandPathToNode(nodeId);
+                    
+                    const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
+                    if (nodeElement) {
+                        nodeElement.classList.add('highlighted');
+                    }
+                }
+            });
+            
+            const searchTime = Date.now() - startTime;
+            updatePerformanceInfo(`Found ${matchCount} matches in ${searchTime}ms`);
+            
+            setTimeout(() => {
+                const firstMatch = document.querySelector('.node-content.highlighted');
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+
+        function expandPathToNode(nodeId) {
+            const path = [];
+            let currentNode = flatNodesMap.get(nodeId);
+            
+            while (currentNode && currentNode.pid) {
+                path.unshift(currentNode.pid);
+                currentNode = flatNodesMap.get(currentNode.pid);
+            }
+            
+            path.forEach(id => {
+                const nodeElement = document.querySelector(`[data-id="${id}"]`);
+                if (nodeElement) {
+                    const childrenDiv = nodeElement.querySelector('.children');
+                    if (childrenDiv && childrenDiv.classList.contains('collapsed')) {
+                        toggleNode(id);
+                    }
+                }
+            });
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchTerm = '';
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+            updatePerformanceInfo('Search cleared');
+        }
+
+        // Try to load default data on startup
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('nodes_hierarchy.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    nodesData = data;
+                    buildFlatNodeMap(nodesData);
+                    displayStats();
+                    renderTree();
+                    // Don't hide import section - keep it available for new imports
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('tree').style.display = 'block';
+                    updatePerformanceInfo(`Loaded ${totalNodes.toLocaleString()} nodes from default file`);
+                }
+            } catch (error) {
+                // No default file, show import section
+                console.log('No default data file found, showing import section');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey || event.metaKey) {
+                switch(event.key) {
+                    case 'f':
+                        event.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'c':
+                        event.preventDefault();
+                        collapseAll();
+                        break;
+                }
+            }
+            if (event.key === 'Escape') {
+                clearSearch();
+            }
+        });
+    </script>
+</body>
+</html>

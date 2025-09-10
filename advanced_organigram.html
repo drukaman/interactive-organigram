@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Interactive Organigram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 100px;
+            z-index: 99;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .toolbar-section label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: #495057;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn.success {
+            background: #28a745;
+        }
+
+        .btn.success:hover {
+            background: #218838;
+        }
+
+        .btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn.warning:hover {
+            background: #e0a800;
+        }
+
+        .search-box {
+            position: relative;
+            display: inline-block;
+        }
+
+        .search-input {
+            padding: 10px 40px 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 14px;
+            width: 350px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .view-controls {
+            display: flex;
+            gap: 5px;
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .view-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .sidebar {
+            position: fixed;
+            right: -350px;
+            top: 0;
+            width: 350px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #667eea;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .main-content {
+            transition: margin-right 0.3s ease;
+        }
+
+        .main-content.sidebar-open {
+            margin-right: 350px;
+        }
+
+        .tree-container {
+            background: white;
+            margin: 20px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            min-height: 70vh;
+        }
+
+        .tree {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 14px;
+        }
+
+        .node {
+            margin: 3px 0;
+            position: relative;
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .node-content:hover {
+            background-color: #f8f9fa;
+            transform: translateX(8px);
+            border-color: #e9ecef;
+        }
+
+        .node-content.highlighted {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-color: #ffc107;
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .node-content.selected {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border-color: #17a2b8;
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+
+        .toggle-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        .toggle-btn.no-children {
+            background: #dee2e6;
+            color: #6c757d;
+            cursor: default;
+        }
+
+        .toggle-btn.no-children:hover {
+            background: #dee2e6;
+            transform: none;
+        }
+
+        .node-label {
+            flex: 1;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .node-badges {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge.level {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .badge.id {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-family: monospace;
+        }
+
+        .badge.children {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .children {
+            margin-left: 36px;
+            border-left: 2px solid #e9ecef;
+            padding-left: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .children::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #667eea, transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .children:hover::before {
+            opacity: 1;
+        }
+
+        .children.collapsed {
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .children.expanded {
+            max-height: none;
+        }
+
+        .level-l1 .node-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .level-l2 .node-content {
+            background: linear-gradient(135deg, #48cae4 0%, #0077b6 100%);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 3px 12px rgba(72, 202, 228, 0.3);
+        }
+
+        .level-l3 .node-content {
+            background: linear-gradient(135deg, #90e0ef 0%, #0096c7 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(144, 224, 239, 0.3);
+        }
+
+        .level-l4 .node-content {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin-left: 20px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #dc3545;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-radius: 12px;
+            margin: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .breadcrumb {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px 20px;
+            margin: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+            display: none;
+        }
+
+        .breadcrumb.show {
+            display: block;
+        }
+
+        .breadcrumb-item {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .breadcrumb-item:hover {
+            background: #e7f1ff;
+            text-decoration: none;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: #6c757d;
+        }
+
+        .minimap {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            display: none;
+        }
+
+        .minimap.show {
+            display: block;
+        }
+
+        .export-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 150px;
+            display: none;
+        }
+
+        .export-menu.show {
+            display: block;
+        }
+
+        .export-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .export-item:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .toolbar-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-input {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .main-content.sidebar-open {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Advanced Interactive Organigram</h1>
+        <p>Explore, search, and analyze your hierarchical data structure</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-section">
+            <label>Navigation:</label>
+            <button class="btn" onclick="expandAll()">🔄 Expand All</button>
+            <button class="btn" onclick="collapseAll()">📁 Collapse All</button>
+
+            <div class="view-controls">
+                <button class="view-btn active" onclick="expandToLevel(1)">L1</button>
+                <button class="view-btn" onclick="expandToLevel(2)">L1-2</button>
+                <button class="view-btn" onclick="expandToLevel(3)">L1-3</button>
+                <button class="view-btn" onclick="expandToLevel(4)">All</button>
+            </div>
+        </div>
+
+        <div class="toolbar-section">
+            <label>Search:</label>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search nodes... (Ctrl+F)"
+                    oninput="searchNodes()">
+                <button class="search-clear" onclick="clearSearch()">×</button>
+            </div>
+
+            <button class="btn secondary" onclick="toggleSidebar()">📊 Stats</button>
+
+            <div style="position: relative;">
+                <button class="btn success" onclick="toggleExportMenu()">💾 Export</button>
+                <div class="export-menu" id="exportMenu">
+                    <button class="export-item" onclick="exportAsJSON()">Export as JSON</button>
+                    <button class="export-item" onclick="exportAsCSV()">Export as CSV</button>
+                    <button class="export-item" onclick="exportAsSVG()">Export as SVG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be populated by JavaScript -->
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <!-- Breadcrumb will be shown when focused on a specific node -->
+        </div>
+
+        <div class="tree-container">
+            <div id="loading" class="loading">Loading organigram data</div>
+            <div id="error" class="error" style="display: none;"></div>
+            <div id="tree" class="tree" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Statistics & Info</h3>
+            <button class="btn secondary" onclick="toggleSidebar()">×</button>
+        </div>
+        <div class="sidebar-content" id="sidebarContent">
+            <!-- Sidebar content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="minimap" id="minimap">
+        <!-- Minimap will be populated by JavaScript -->
+    </div>
+
+    <script>
+        let nodesData = [];
+        let originalData = [];
+        let nodeElements = new Map();
+        let searchTerm = '';
+        let selectedNode = null;
+        let sidebarOpen = false;
+
+        // Load and initialize the organigram
+        async function loadOrganigram() {
+            try {
+                const response = await fetch('nodes_hierarchy.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                originalData = await response.json();
+                nodesData = JSON.parse(JSON.stringify(originalData));
+
+                displayStats();
+                renderTree();
+                updateSidebar();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('tree').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading organigram:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
+                    <h3>⚠️ Error Loading Data</h3>
+                    <p>Could not load the organigram data. Please ensure 'nodes_hierarchy.json' is available.</p>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+
+        // Display statistics
+        function displayStats() {
+            const stats = calculateStats(originalData);
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.totalNodes.toLocaleString()}</div>
+                    <div class="stat-label">Total Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.rootNodes}</div>
+                    <div class="stat-label">Root Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.maxDepth}</div>
+                    <div class="stat-label">Max Depth</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.avgChildren.toFixed(1)}</div>
+                    <div class="stat-label">Avg Children</div>
+                </div>
+            `;
+        }
+
+        // Calculate comprehensive statistics
+        function calculateStats(data) {
+            let totalNodes = 0;
+            let levels = {};
+            let depths = [];
+            let childrenCounts = [];
+
+            function analyzeNodes(nodes, depth = 0) {
+                depths.push(depth);
+                for (const node of nodes) {
+                    totalNodes++;
+                    levels[node.level] = (levels[node.level] || 0) + 1;
+
+                    if (node.children && node.children.length > 0) {
+                        childrenCounts.push(node.children.length);
+                        analyzeNodes(node.children, depth + 1);
+                    } else {
+                        childrenCounts.push(0);
+                    }
+                }
+            }
+
+            analyzeNodes(data);
+
+            const avgChildren = childrenCounts.length > 0
+                ? childrenCounts.reduce((a, b) => a + b, 0) / childrenCounts.length
+                : 0;
+
+            return {
+                totalNodes,
+                rootNodes: data.length,
+                levels,
+                maxDepth: Math.max(...depths),
+                avgChildren,
+                childrenCounts
+            };
+        }
+
+        // Render the tree structure
+        function renderTree() {
+            const treeElement = document.getElementById('tree');
+            treeElement.innerHTML = '';
+            nodeElements.clear();
+
+            nodesData.forEach(rootNode => {
+                treeElement.appendChild(createNodeElement(rootNode));
+            });
+        }
+
+        // Create enhanced node element
+        function createNodeElement(node, isExpanded = false) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = `node level-${node.level}`;
+            nodeDiv.setAttribute('data-id', node.id);
+
+            const hasChildren = node.children && node.children.length > 0;
+
+            const nodeContent = document.createElement('div');
+            nodeContent.className = 'node-content';
+            nodeContent.onclick = (e) => {
+                e.stopPropagation();
+                selectNode(node.id);
+                toggleNode(node.id);
+            };
+
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = `toggle-btn ${hasChildren ? '' : 'no-children'}`;
+            toggleBtn.innerHTML = hasChildren ? (isExpanded ? '−' : '+') : '●';
+
+            const label = document.createElement('span');
+            label.className = 'node-label';
+            label.textContent = node.name;
+
+            const badges = document.createElement('div');
+            badges.className = 'node-badges';
+
+            const levelBadge = document.createElement('span');
+            levelBadge.className = 'badge level';
+            levelBadge.textContent = node.level.toUpperCase();
+
+            const idBadge = document.createElement('span');
+            idBadge.className = 'badge id';
+            idBadge.textContent = `#${node.id}`;
+
+            badges.appendChild(levelBadge);
+            badges.appendChild(idBadge);
+
+            if (hasChildren) {
+                const childrenBadge = document.createElement('span');
+                childrenBadge.className = 'badge children';
+                childrenBadge.textContent = `${node.children.length} children`;
+                badges.appendChild(childrenBadge);
+            }
+
+            nodeContent.appendChild(toggleBtn);
+            nodeContent.appendChild(label);
+            nodeContent.appendChild(badges);
+            nodeDiv.appendChild(nodeContent);
+
+            if (hasChildren) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = `children ${isExpanded ? 'expanded' : 'collapsed'}`;
+
+                node.children.forEach(child => {
+                    childrenDiv.appendChild(createNodeElement(child, false));
+                });
+
+                nodeDiv.appendChild(childrenDiv);
+            }
+
+            nodeElements.set(node.id, {
+                element: nodeDiv,
+                node: node,
+                isExpanded: isExpanded
+            });
+
+            return nodeDiv;
+        }
+
+        // Select a node
+        function selectNode(nodeId) {
+            // Clear previous selection
+            document.querySelectorAll('.node-content.selected').forEach(element => {
+                element.classList.remove('selected');
+            });
+
+            const nodeData = nodeElements.get(nodeId);
+            if (nodeData) {
+                selectedNode = nodeData.node;
+                nodeData.element.querySelector('.node-content').classList.add('selected');
+                updateBreadcrumb(nodeId);
+                updateSidebar();
+            }
+        }
+
+        // Update breadcrumb navigation
+        function updateBreadcrumb(nodeId) {
+            const path = findNodePath(originalData, nodeId);
+            const breadcrumb = document.getElementById('breadcrumb');
+
+            if (path && path.length > 1) {
+                breadcrumb.innerHTML = path.map((id, index) => {
+                    const nodeData = nodeElements.get(id);
+                    const nodeName = nodeData ? nodeData.node.name : `Node ${id}`;
+                    const isLast = index === path.length - 1;
+
+                    return `
+                        <a href="#" class="breadcrumb-item" onclick="selectNode('${id}'); expandPathToNode('${id}'); return false;">
+                            ${nodeName}
+                        </a>
+                        ${!isLast ? '<span class="breadcrumb-separator">→</span>' : ''}
+                    `;
+                }).join('');
+
+                breadcrumb.classList.add('show');
+            } else {
+                breadcrumb.classList.remove('show');
+            }
+        }
+
+        // Find path to node
+        function findNodePath(nodes, targetId, path = []) {
+            for (const node of nodes) {
+                const currentPath = [...path, node.id];
+                if (node.id === targetId) {
+                    return currentPath;
+                }
+                if (node.children && node.children.length > 0) {
+                    const foundPath = findNodePath(node.children, targetId, currentPath);
+                    if (foundPath) {
+                        return foundPath;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Toggle node expansion/collapse
+        function toggleNode(nodeId) {
+            const nodeData = nodeElements.get(nodeId);
+            if (!nodeData || !nodeData.node.children || nodeData.node.children.length === 0) {
+                return;
+            }
+
+            const { element, isExpanded } = nodeData;
+            const childrenDiv = element.querySelector('.children');
+            const toggleBtn = element.querySelector('.toggle-btn');
+
+            if (isExpanded) {
+                childrenDiv.classList.remove('expanded');
+                childrenDiv.classList.add('collapsed');
+                toggleBtn.innerHTML = '+';
+                nodeData.isExpanded = false;
+            } else {
+                childrenDiv.classList.remove('collapsed');
+                childrenDiv.classList.add('expanded');
+                toggleBtn.innerHTML = '−';
+                nodeData.isExpanded = true;
+            }
+        }
+
+        // Navigation functions
+        function expandAll() {
+            nodeElements.forEach((nodeData, nodeId) => {
+                if (nodeData.node.children && nodeData.node.children.length > 0) {
+                    const childrenDiv = nodeData.element.querySelector('.children');
+                    const toggleBtn = nodeData.element.querySelector('.toggle-btn');
+
+                    childrenDiv.classList.remove('collapsed');
+                    childrenDiv.classList.add('expanded');
+                    toggleBtn.innerHTML = '−';
+                    nodeData.isExpanded = true;
+                }
+            });
+            updateActiveViewButton('all');
+        }
+
+        function collapseAll() {
+            nodeElements.forEach((nodeData, nodeId) => {
+                if (nodeData.node.children && nodeData.node.children.length > 0) {
+                    const childrenDiv = nodeData.element.querySelector('.children');
+                    const toggleBtn = nodeData.element.querySelector('.toggle-btn');
+
+                    childrenDiv.classList.remove('expanded');
+                    childrenDiv.classList.add('collapsed');
+                    toggleBtn.innerHTML = '+';
+                    nodeData.isExpanded = false;
+                }
+            });
+            updateActiveViewButton('collapsed');
+        }
+
+        function expandToLevel(maxLevel) {
+            collapseAll();
+
+            nodeElements.forEach((nodeData, nodeId) => {
+                const level = parseInt(nodeData.node.level.substring(1));
+                if (level < maxLevel && nodeData.node.children && nodeData.node.children.length > 0) {
+                    const childrenDiv = nodeData.element.querySelector('.children');
+                    const toggleBtn = nodeData.element.querySelector('.toggle-btn');
+
+                    childrenDiv.classList.remove('collapsed');
+                    childrenDiv.classList.add('expanded');
+                    toggleBtn.innerHTML = '−';
+                    nodeData.isExpanded = true;
+                }
+            });
+            updateActiveViewButton(`level-${maxLevel}`);
+        }
+
+        function updateActiveViewButton(type) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (type === 'level-1') document.querySelector('.view-btn[onclick="expandToLevel(1)"]').classList.add('active');
+            else if (type === 'level-2') document.querySelector('.view-btn[onclick="expandToLevel(2)"]').classList.add('active');
+            else if (type === 'level-3') document.querySelector('.view-btn[onclick="expandToLevel(3)"]').classList.add('active');
+            else if (type === 'all') document.querySelector('.view-btn[onclick="expandToLevel(4)"]').classList.add('active');
+        }
+
+        // Search functionality
+        function searchNodes() {
+            const searchInput = document.getElementById('searchInput');
+            searchTerm = searchInput.value.toLowerCase().trim();
+
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+
+            if (searchTerm === '') return;
+
+            let matchCount = 0;
+            nodeElements.forEach((nodeData, nodeId) => {
+                const nodeName = nodeData.node.name.toLowerCase();
+                const nodeContent = nodeData.element.querySelector('.node-content');
+
+                if (nodeName.includes(searchTerm) || nodeId.includes(searchTerm)) {
+                    nodeContent.classList.add('highlighted');
+                    expandPathToNode(nodeId);
+                    matchCount++;
+                }
+            });
+
+            if (matchCount > 0) {
+                const firstMatch = document.querySelector('.node-content.highlighted');
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchTerm = '';
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+        }
+
+        function expandPathToNode(nodeId) {
+            const path = findNodePath(originalData, nodeId);
+            if (path) {
+                path.slice(0, -1).forEach(id => {
+                    const nodeData = nodeElements.get(id);
+                    if (nodeData && nodeData.node.children && nodeData.node.children.length > 0) {
+                        const childrenDiv = nodeData.element.querySelector('.children');
+                        const toggleBtn = nodeData.element.querySelector('.toggle-btn');
+
+                        childrenDiv.classList.remove('collapsed');
+                        childrenDiv.classList.add('expanded');
+                        toggleBtn.innerHTML = '−';
+                        nodeData.isExpanded = true;
+                    }
+                });
+            }
+        }
+
+        // Sidebar functionality
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            if (sidebarOpen) {
+                sidebar.classList.add('open');
+                mainContent.classList.add('sidebar-open');
+            } else {
+                sidebar.classList.remove('open');
+                mainContent.classList.remove('sidebar-open');
+            }
+        }
+
+        function updateSidebar() {
+            const sidebarContent = document.getElementById('sidebarContent');
+            const stats = calculateStats(originalData);
+
+            let content = `
+                <h4>Overall Statistics</h4>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Total Nodes:</strong> ${stats.totalNodes.toLocaleString()}</p>
+                    <p><strong>Root Categories:</strong> ${stats.rootNodes}</p>
+                    <p><strong>Maximum Depth:</strong> ${stats.maxDepth}</p>
+                    <p><strong>Average Children:</strong> ${stats.avgChildren.toFixed(2)}</p>
+                </div>
+                
+                <h4>Level Distribution</h4>
+                <div style="margin-bottom: 20px;">
+            `;
+
+            Object.entries(stats.levels).forEach(([level, count]) => {
+                content += `<p><strong>${level.toUpperCase()}:</strong> ${count.toLocaleString()} nodes</p>`;
+            });
+
+            content += '</div>';
+
+            if (selectedNode) {
+                content += `
+                    <h4>Selected Node</h4>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p><strong>Name:</strong> ${selectedNode.name}</p>
+                        <p><strong>ID:</strong> ${selectedNode.id}</p>
+                        <p><strong>Level:</strong> ${selectedNode.level}</p>
+                        <p><strong>Children:</strong> ${selectedNode.children ? selectedNode.children.length : 0}</p>
+                        ${selectedNode.pid ? `<p><strong>Parent ID:</strong> ${selectedNode.pid}</p>` : ''}
+                    </div>
+                `;
+            }
+
+            sidebarContent.innerHTML = content;
+        }
+
+        // Export functionality
+        function toggleExportMenu() {
+            const menu = document.getElementById('exportMenu');
+            menu.classList.toggle('show');
+        }
+
+        function exportAsJSON() {
+            const dataStr = JSON.stringify(originalData, null, 2);
+            downloadFile(dataStr, 'organigram_export.json', 'application/json');
+            document.getElementById('exportMenu').classList.remove('show');
+        }
+
+        function exportAsCSV() {
+            let csv = 'ID,Name,Parent ID,Level,Children Count\n';
+
+            function processNode(node) {
+                const childrenCount = node.children ? node.children.length : 0;
+                csv += `"${node.id}","${node.name.replace(/"/g, '""')}","${node.pid || ''}","${node.level}","${childrenCount}"\n`;
+
+                if (node.children) {
+                    node.children.forEach(child => processNode(child));
+                }
+            }
+
+            originalData.forEach(rootNode => processNode(rootNode));
+
+            downloadFile(csv, 'organigram_export.csv', 'text/csv');
+            document.getElementById('exportMenu').classList.remove('show');
+        }
+
+        function exportAsSVG() {
+            // Simple SVG export - would need more complex implementation for full tree
+            alert('SVG export feature coming soon!');
+            document.getElementById('exportMenu').classList.remove('show');
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', loadOrganigram);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (event) {
+            if (event.ctrlKey || event.metaKey) {
+                switch (event.key) {
+                    case 'f':
+                        event.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'e':
+                        event.preventDefault();
+                        expandAll();
+                        break;
+                    case 'c':
+                        event.preventDefault();
+                        collapseAll();
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        toggleSidebar();
+                        break;
+                }
+            }
+            if (event.key === 'Escape') {
+                clearSearch();
+                document.getElementById('exportMenu').classList.remove('show');
+            }
+        });
+
+        // Close export menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const exportMenu = document.getElementById('exportMenu');
+            if (!event.target.closest('[onclick="toggleExportMenu()"]') && !exportMenu.contains(event.target)) {
+                exportMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+
+</html>

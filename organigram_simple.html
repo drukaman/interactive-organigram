@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simplified Nodes Organigram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .mermaid { max-width: 100%; overflow-x: auto; }
+        h1 { color: #333; }
+        .info { background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Simplified Nodes Organigram (Top 2 Levels)</h1>
+    
+    <div class="info">
+        <h3>About this diagram:</h3>
+        <p>This shows the hierarchical structure of nodes with only the top 2 levels (l1 and l2) for better readability.</p>
+        <p>The complete hierarchy has 4 levels with 11,754 nodes total:</p>
+        <ul>
+            <li>Level 1: 7 root nodes</li>
+            <li>Level 2: 71 nodes</li>
+            <li>Level 3: 2,935 nodes</li>
+            <li>Level 4: 8,741 nodes</li>
+        </ul>
+    </div>
+    
+    <div class="mermaid">
+graph TD
+    1["Commodity"]
+    103520["Machinery"]
+    103532["Production Process"]
+    103628["Prototype"]
+    103644["Raw Materials"]
+    103678["Third Party Services "]
+    103728["Tooling & Fixtures"]
+    103679["35kg/m2"]
+    103678 --> 103679
+    103521["3D Printers"]
+    103520 --> 103521
+    103681["40g/m2"]
+    103678 --> 103681
+    103683["65kg/m2"]
+    103678 --> 103683
+    103685["70g/m2"]
+    103678 --> 103685
+    103533["Additive Manufacturing (3D ..."]
+    103532 --> 103533
+    103645["Billet"]
+    103644 --> 103645
+    103729["Blanking Dies"]
+    103728 --> 103729
+    2["Body"]
+    1 --> 2
+    103581["Casting"]
+    103532 --> 103581
+    103647["Ceramics"]
+    103644 --> 103647
+    3["Chassis"]
+    1 --> 3
+    103649["Chemicals"]
+    103644 --> 103649
+    103527["CNC Machines"]
+    103520 --> 103527
+    103651["Cold-Rolled"]
+    103644 --> 103651
+    103629["Cold Runner Injection Molding"]
+    103628 --> 103629
+    103687["Crates"]
+    103678 --> 103687
+    103731["Die Sets"]
+    103728 --> 103731
+    103733["Drawing Dies"]
+    103728 --> 103733
+    103631["Drilling"]
+    103628 --> 103631
+    103689["Dry Bags"]
+    103678 --> 103689
+    4["Electronics"]
+    1 --> 4
+    103653["ELO"]
+    103644 --> 103653
+    5["E-Powertrain"]
+    1 --> 5
+    103691["EPP Foam"]
+    103678 --> 103691
+    103693["ESD"]
+    103678 --> 103693
+    103695["ESD Bags"]
+    103678 --> 103695
+    103697["ESD Foam"]
+    103678 --> 103697
+    103699["ESD Tray"]
+    103678 --> 103699
+    101160["EV Related Parts"]
+    1 --> 101160
+    6["Exterior"]
+    1 --> 6
+    103701["Films"]
+    103678 --> 103701
+    103633["Fine Blanking (Formative Ma..."]
+    103628 --> 103633
+    103599["Forging"]
+    103532 --> 103599
+    103655["Gas"]
+    103644 --> 103655
+    7["General"]
+    1 --> 7
+    103657["Gold"]
+    103644 --> 103657
+    103659["HDG"]
+    103644 --> 103659
+    103703["Heavy-duty Corrugated Board"]
+    103678 --> 103703
+    103661["Hot-Rolled"]
+    103644 --> 103661
+    103635["Hot Runner Injection Molding"]
+    103628 --> 103635
+    103663["Ingot"]
+    103644 --> 103663
+    103735["Inserts"]
+    103728 --> 103735
+    8["Interior"]
+    1 --> 8
+    103665["Iridium (Ir)"]
+    103644 --> 103665
+    103667["Lead"]
+    103644 --> 103667
+    103705["Light-duty Corrugated Board"]
+    103678 --> 103705
+    103707["Logistic Services"]
+    103678 --> 103707
+    103709["Lumber"]
+    103678 --> 103709
+    103669["Mica"]
+    103644 --> 103669
+    103637["Milling"]
+    103628 --> 103637
+    95578["Motorcycle"]
+    1 --> 95578
+    103711["Pallets"]
+    103678 --> 103711
+    103715["PE Bags"]
+    103678 --> 103715
+    103713["PE (Polyethylene)"]
+    103678 --> 103713
+    9["Powertrain"]
+    1 --> 9
+    103717["PP (Polypropylene)"]
+    103678 --> 103717
+    103719["Quality Services"]
+    103678 --> 103719
+    103671["Rhodium (Rh)"]
+    103644 --> 103671
+    103639["Rotational Injection Molding"]
+    103628 --> 103639
+    103673["Sill"]
+    103644 --> 103673
+    103641["Tailored Blank (Formative M..."]
+    103628 --> 103641
+    103643["Thin-Wall Injection Molding"]
+    103628 --> 103643
+    103675["Tin"]
+    103644 --> 103675
+    103737["Trimming Dies"]
+    103728 --> 103737
+    103608["Various Processes"]
+    103532 --> 103608
+    103721["VCI Bags"]
+    103678 --> 103721
+    103723["VCI Films"]
+    103678 --> 103723
+    103725["VCI Foam"]
+    103678 --> 103725
+    103727["VCI Paper"]
+    103678 --> 103727
+    103677["Zinc"]
+    103644 --> 103677
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Interactive Organigram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #ffffff;
+            color: #333333;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #333333;
+        }
+
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: #666666;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #333333;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+            border-color: #999999;
+        }
+
+        .btn:disabled {
+            background: #f8f8f8;
+            color: #cccccc;
+            cursor: not-allowed;
+            border-color: #e0e0e0;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 350px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #999999;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        .tree-container {
+            background: white;
+            margin: 20px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            min-height: 70vh;
+        }
+
+        .tree {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 14px;
+        }
+
+        .node {
+            margin: 3px 0;
+            position: relative;
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .node-content:hover {
+            background-color: #f5f5f5;
+            transform: translateX(4px);
+            border-color: #cccccc;
+        }
+
+        .node-content.highlighted {
+            background: #f0f0f0;
+            border-color: #999999;
+        }
+
+        .toggle-btn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #cccccc;
+            background: #ffffff;
+            color: #333333;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #f5f5f5;
+            border-color: #999999;
+        }
+
+        .toggle-btn.no-children {
+            background: #f8f8f8;
+            color: #cccccc;
+            cursor: default;
+            border-color: #e0e0e0;
+        }
+
+        .toggle-btn.loading {
+            background: #f0f0f0;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .node-label {
+            flex: 1;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .node-info {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #f5f5f5;
+            color: #666666;
+        }
+
+        .children {
+            margin-left: 36px;
+            border-left: 2px solid #e0e0e0;
+            padding-left: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .children.collapsed {
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        .children.expanded {
+            max-height: none;
+        }
+
+        .level-l1 .node-content {
+            background: #f8f8f8;
+            color: #333333;
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid #cccccc;
+        }
+
+        .level-l2 .node-content {
+            background: #f5f5f5;
+            color: #333333;
+            font-weight: 600;
+            border: 1px solid #d0d0d0;
+        }
+
+        .level-l3 .node-content {
+            background: #f9f9f9;
+            color: #333333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .level-l4 .node-content {
+            background: #ffffff;
+            color: #666666;
+            border: 1px solid #e5e5e5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #d32f2f;
+            background: #ffffff;
+            border-radius: 8px;
+            margin: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .performance-info {
+            background: #f8f8f8;
+            color: #333333;
+            padding: 10px 20px;
+            margin: 20px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .search-input {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="loading-progress" id="loadingProgress" style="display: none;">
+            <div class="loading-bar" id="loadingBar"></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-section">
+            <button class="btn" onclick="expandLevel(1)" id="expandL1">Show L1</button>
+            <button class="btn" onclick="expandLevel(2)" id="expandL2">Show L1-2</button>
+            <button class="btn" onclick="collapseAll()" id="collapseBtn">Collapse All</button>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..."
+                oninput="searchNodes()">
+            <button class="btn" onclick="clearSearch()">Clear</button>
+        </div>
+    </div>
+
+    <div class="performance-info" id="performanceInfo" style="display: none;">
+        <!-- Performance metrics will be shown here -->
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+        <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <div class="tree-container">
+        <div id="loading" class="loading">Loading organigram data...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="tree" class="tree" style="display: none;"></div>
+    </div>
+
+    <script>
+        let nodesData = [];
+        let flatNodesMap = new Map(); // For efficient lookups
+        let renderedNodes = new Set(); // Track which nodes are rendered
+        let searchTerm = '';
+        let loadingStartTime = Date.now();
+        let totalNodes = 0;
+
+        // Performance monitoring
+        function updatePerformanceInfo(message) {
+            const perfInfo = document.getElementById('performanceInfo');
+            const elapsed = Date.now() - loadingStartTime;
+            perfInfo.innerHTML = `
+                <strong>Performance:</strong> ${message} | 
+                <strong>Elapsed:</strong> ${elapsed}ms | 
+                <strong>Memory:</strong> ${(performance.memory?.usedJSHeapSize / 1024 / 1024).toFixed(1) || 'N/A'} MB
+            `;
+            perfInfo.style.display = 'block';
+            console.log(`Performance: ${message} (${elapsed}ms)`);
+        }
+
+        // Load organigram with progress tracking
+        async function loadOrganigram() {
+            try {
+                updatePerformanceInfo('Starting data fetch...');
+                showLoadingProgress(true);
+
+                const response = await fetch('nodes_hierarchy.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                updatePerformanceInfo('Parsing JSON data...');
+                updateLoadingProgress(30);
+
+                nodesData = await response.json();
+
+                updatePerformanceInfo('Building node index...');
+                updateLoadingProgress(60);
+
+                // Build flat map for efficient lookups
+                buildFlatNodeMap(nodesData);
+
+                updatePerformanceInfo('Calculating statistics...');
+                updateLoadingProgress(80);
+
+                displayStats();
+
+                updatePerformanceInfo('Rendering initial view...');
+                updateLoadingProgress(90);
+
+                renderTree();
+
+                updateLoadingProgress(100);
+                showLoadingProgress(false);
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('tree').style.display = 'block';
+
+                updatePerformanceInfo(`Loaded ${totalNodes.toLocaleString()} nodes successfully`);
+
+            } catch (error) {
+                console.error('Error loading organigram:', error);
+                showLoadingProgress(false);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
+                    <h3>⚠️ Error Loading Data</h3>
+                    <p>The organigram data could not be loaded. This might be due to:</p>
+                    <ul style="text-align: left; max-width: 500px; margin: 20px auto;">
+                        <li>File access restrictions (try using a local server)</li>
+                        <li>Large file size (${(2.3).toFixed(1)} MB) causing memory issues</li>
+                        <li>Network connectivity problems</li>
+                        <li>Browser compatibility issues</li>
+                    </ul>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Suggestion:</strong> Try opening this page using a local HTTP server:</p>
+                    <code style="background: #f8f9fa; padding: 10px; border-radius: 5px; display: block; margin: 10px 0;">
+                        python3 -m http.server 8000
+                    </code>
+                `;
+            }
+        }
+
+        // Build flat map for efficient node lookups
+        function buildFlatNodeMap(nodes) {
+            function processNode(node) {
+                flatNodesMap.set(node.id, node);
+                totalNodes++;
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(child => processNode(child));
+                }
+            }
+
+            nodes.forEach(rootNode => processNode(rootNode));
+        }
+
+        // Show/hide loading progress
+        function showLoadingProgress(show) {
+            const progress = document.getElementById('loadingProgress');
+            progress.style.display = show ? 'block' : 'none';
+            if (!show) {
+                updateLoadingProgress(0);
+            }
+        }
+
+        function updateLoadingProgress(percent) {
+            const bar = document.getElementById('loadingBar');
+            bar.style.width = `${percent}%`;
+        }
+
+        // Display statistics
+        function displayStats() {
+            const stats = calculateStats(nodesData);
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalNodes.toLocaleString()}</div>
+                    <div>Total Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.rootNodes}</div>
+                    <div>Root Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l1 || 0}</div>
+                    <div>Level 1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l2 || 0}</div>
+                    <div>Level 2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l3 || 0}</div>
+                    <div>Level 3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.levels.l4 || 0}</div>
+                    <div>Level 4</div>
+                </div>
+            `;
+        }
+
+        // Calculate statistics efficiently
+        function calculateStats(data) {
+            const levels = {};
+
+            flatNodesMap.forEach(node => {
+                levels[node.level] = (levels[node.level] || 0) + 1;
+            });
+
+            return {
+                totalNodes: totalNodes,
+                rootNodes: data.length,
+                levels: levels
+            };
+        }
+
+        // Render tree with lazy loading
+        function renderTree() {
+            const treeElement = document.getElementById('tree');
+            treeElement.innerHTML = '';
+            renderedNodes.clear();
+
+            // Only render root nodes initially
+            nodesData.forEach(rootNode => {
+                treeElement.appendChild(createNodeElement(rootNode, false));
+            });
+
+            updatePerformanceInfo(`Rendered ${nodesData.length} root nodes`);
+        }
+
+        // Create node element with lazy loading
+        function createNodeElement(node, isExpanded = false) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = `node level-${node.level}`;
+            nodeDiv.setAttribute('data-id', node.id);
+
+            const hasChildren = node.children && node.children.length > 0;
+
+            const nodeContent = document.createElement('div');
+            nodeContent.className = 'node-content';
+            nodeContent.onclick = () => toggleNode(node.id);
+
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = `toggle-btn ${hasChildren ? '' : 'no-children'}`;
+            toggleBtn.innerHTML = hasChildren ? (isExpanded ? '−' : '+') : '●';
+
+            const label = document.createElement('span');
+            label.className = 'node-label';
+            label.textContent = node.name;
+
+            const info = document.createElement('span');
+            info.className = 'node-info';
+            info.textContent = `${node.level} | ID: ${node.id}`;
+            if (hasChildren) {
+                info.textContent += ` | ${node.children.length} children`;
+            }
+
+            nodeContent.appendChild(toggleBtn);
+            nodeContent.appendChild(label);
+            nodeContent.appendChild(info);
+            nodeDiv.appendChild(nodeContent);
+
+            if (hasChildren && isExpanded) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children expanded';
+
+                // Render children lazily
+                node.children.forEach(child => {
+                    childrenDiv.appendChild(createNodeElement(child, false));
+                });
+
+                nodeDiv.appendChild(childrenDiv);
+            } else if (hasChildren) {
+                // Create placeholder for collapsed children
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children collapsed';
+                nodeDiv.appendChild(childrenDiv);
+            }
+
+            renderedNodes.add(node.id);
+            return nodeDiv;
+        }
+
+        // Toggle node with lazy loading
+        function toggleNode(nodeId) {
+            const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+            if (!nodeElement) return;
+
+            const node = flatNodesMap.get(nodeId);
+            if (!node || !node.children || node.children.length === 0) return;
+
+            const childrenDiv = nodeElement.querySelector('.children');
+            const toggleBtn = nodeElement.querySelector('.toggle-btn');
+            const isExpanded = childrenDiv.classList.contains('expanded');
+
+            if (isExpanded) {
+                // Collapse
+                childrenDiv.classList.remove('expanded');
+                childrenDiv.classList.add('collapsed');
+                toggleBtn.innerHTML = '+';
+            } else {
+                // Expand - lazy load children if not already loaded
+                toggleBtn.classList.add('loading');
+
+                setTimeout(() => {
+                    if (childrenDiv.children.length === 0) {
+                        // Load children
+                        node.children.forEach(child => {
+                            childrenDiv.appendChild(createNodeElement(child, false));
+                        });
+                    }
+
+                    childrenDiv.classList.remove('collapsed');
+                    childrenDiv.classList.add('expanded');
+                    toggleBtn.classList.remove('loading');
+                    toggleBtn.innerHTML = '−';
+                }, 10); // Small delay to show loading state
+            }
+        }
+
+        // Expand to specific level
+        function expandLevel(maxLevel) {
+            collapseAll();
+
+            document.querySelectorAll('.node').forEach(nodeElement => {
+                const nodeId = nodeElement.getAttribute('data-id');
+                const node = flatNodesMap.get(nodeId);
+                if (node) {
+                    const level = parseInt(node.level.substring(1));
+                    if (level < maxLevel && node.children && node.children.length > 0) {
+                        toggleNode(nodeId);
+                    }
+                }
+            });
+
+            updatePerformanceInfo(`Expanded to level ${maxLevel}`);
+        }
+
+        // Collapse all nodes
+        function collapseAll() {
+            document.querySelectorAll('.children.expanded').forEach(childrenDiv => {
+                const nodeElement = childrenDiv.closest('.node');
+                const nodeId = nodeElement.getAttribute('data-id');
+                const toggleBtn = nodeElement.querySelector('.toggle-btn');
+
+                childrenDiv.classList.remove('expanded');
+                childrenDiv.classList.add('collapsed');
+                toggleBtn.innerHTML = '+';
+            });
+
+            updatePerformanceInfo('Collapsed all nodes');
+        }
+
+        // Search functionality
+        function searchNodes() {
+            const searchInput = document.getElementById('searchInput');
+            searchTerm = searchInput.value.toLowerCase().trim();
+
+            // Clear previous highlights
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+
+            if (searchTerm === '') return;
+
+            let matchCount = 0;
+            const startTime = Date.now();
+
+            flatNodesMap.forEach((node, nodeId) => {
+                if (node.name.toLowerCase().includes(searchTerm)) {
+                    matchCount++;
+                    expandPathToNode(nodeId);
+
+                    // Highlight if the node is rendered
+                    const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
+                    if (nodeElement) {
+                        nodeElement.classList.add('highlighted');
+                    }
+                }
+            });
+
+            const searchTime = Date.now() - startTime;
+            updatePerformanceInfo(`Found ${matchCount} matches in ${searchTime}ms`);
+
+            // Scroll to first visible match
+            setTimeout(() => {
+                const firstMatch = document.querySelector('.node-content.highlighted');
+                if (firstMatch) {
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+
+        // Expand path to show a specific node
+        function expandPathToNode(nodeId) {
+            const path = [];
+            let currentNode = flatNodesMap.get(nodeId);
+
+            // Build path from child to root
+            while (currentNode && currentNode.pid) {
+                path.unshift(currentNode.pid);
+                currentNode = flatNodesMap.get(currentNode.pid);
+            }
+
+            // Expand all nodes in the path
+            path.forEach(id => {
+                const nodeElement = document.querySelector(`[data-id="${id}"]`);
+                if (nodeElement) {
+                    const childrenDiv = nodeElement.querySelector('.children');
+                    if (childrenDiv && childrenDiv.classList.contains('collapsed')) {
+                        toggleNode(id);
+                    }
+                }
+            });
+        }
+
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchTerm = '';
+            document.querySelectorAll('.node-content.highlighted').forEach(element => {
+                element.classList.remove('highlighted');
+            });
+            updatePerformanceInfo('Search cleared');
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', loadOrganigram);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (event) {
+            if (event.ctrlKey || event.metaKey) {
+                switch (event.key) {
+                    case 'f':
+                        event.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'c':
+                        event.preventDefault();
+                        collapseAll();
+                        break;
+                }
+            }
+            if (event.key === 'Escape') {
+                clearSearch();
+            }
+        });
+    </script>
+</body>
+
+</html>
