@@ -332,6 +332,37 @@
             margin-left: 4px;
         }
 
+        .merge-indicator {
+            display: none;
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.1);
+            font-size: 14px;
+            margin-left: 6px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            animation: mergeFlash 2s ease-in-out infinite;
+            text-shadow: 0 0 3px rgba(255, 107, 53, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        @keyframes mergeFlash {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                background: rgba(255, 107, 53, 0.1);
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: scale(1.05);
+                background: rgba(255, 107, 53, 0.2);
+            }
+        }
+
+        .node-merged .merge-indicator {
+            display: inline;
+        }
+
         .edit-mode .edit-indicator {
             display: inline;
         }
@@ -544,7 +575,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 300px;
+            width: 500px;
             max-height: 400px;
             background: white;
             border-radius: 8px;
@@ -635,6 +666,157 @@
             font-size: 11px;
             color: #666;
             margin-top: 2px;
+        }
+
+        /* Merge Functionality Styles */
+        .merge-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .merge-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .merge-btn:not(.cancel):not(.confirm) {
+            background: #007bff;
+            color: white;
+        }
+
+        .merge-btn:not(.cancel):not(.confirm):hover {
+            background: #0056b3;
+        }
+
+        .merge-btn.cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .merge-btn.cancel:hover {
+            background: #545b62;
+        }
+
+        .merge-btn.confirm {
+            background: #28a745;
+            color: white;
+        }
+
+        .merge-btn.confirm:hover:not(:disabled) {
+            background: #1e7e34;
+        }
+
+        .merge-btn:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .merge-active {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .duplicate-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .duplicate-items.merge-mode .duplicate-item {
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .duplicate-item.merge-destination {
+            background: #d4edda !important;
+            border-left-color: #28a745 !important;
+        }
+
+        .duplicate-item.merge-source {
+            background: #fff3cd !important;
+            border-left-color: #ffc107 !important;
+        }
+
+        .merge-checkbox-container {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .merge-checkbox-container input[type="radio"] {
+            margin: 0;
+        }
+
+        .merge-checkbox-container label {
+            margin: 0;
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .duplicate-item-content {
+            padding: 10px 12px;
+        }
+
+        .duplicate-item.has-children {
+            opacity: 0.6;
+            background-color: #f8f9fa;
+        }
+
+        .duplicate-item.has-children .duplicate-item-name {
+            color: #6c757d;
+        }
+
+        .merge-status {
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 4px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .merge-status:contains("DESTINATION") {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .merge-status:contains("Will merge") {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .merge-warning {
+            font-size: 12px;
+            color: #dc3545;
+            font-weight: 500;
+            padding: 4px 8px;
+            background: #f8d7da;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .duplicate-item.has-children {
+            opacity: 0.7;
+            background: #f8f9fa !important;
+        }
+
+        .duplicate-item.has-children .duplicate-item-name {
+            color: #6c757d;
         }
 
         .node-info {
@@ -817,7 +999,7 @@
         <div class="file-drop-area" onclick="triggerFileInput()">
             <h3>📁 Import Your Data</h3>
             <p>Click here or drag & drop your CSV or Excel file to get started</p>
-            <p><small>Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed</small></p>
+            <p><small>Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed, merge</small></p>
             <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileSelect(event)">
         </div>
         <div style="text-align: center; margin-top: 15px;">
@@ -891,14 +1073,15 @@
                     <li><strong>name_de</strong> - German translation of the node name</li>
                     <li><strong>renamed</strong> - TRUE/FALSE flag for edited English names</li>
                     <li><strong>german_changed</strong> - TRUE/FALSE flag for modified German translations</li>
+                    <li><strong>merge</strong> - ID of the target node for duplicate merging</li>
                 </ul>
                 
                 <h4>Example CSV:</h4>
-                <pre>name,id,pid,level,name_de,german_changed
-"Company","1",NULL,"l1","Unternehmen","FALSE"
-"Engineering","2","1","l2","Entwicklung","FALSE"
-"Frontend Team","3","2","l3","Frontend-Team","FALSE"
-"John Doe","4","3","l4","Hans Müller","FALSE"</pre>
+                <pre>name,id,pid,level,name_de,german_changed,merge
+"Company","1",NULL,"l1","Unternehmen","FALSE",""
+"Engineering","2","1","l2","Entwicklung","FALSE",""
+"Frontend Team","3","2","l3","Frontend-Team","FALSE",""
+"John Doe","4","3","l4","Hans Müller","FALSE",""</pre>
                 
                 <h4>Editing Features:</h4>
                 <ul>
@@ -929,12 +1112,16 @@
                     <li><strong>Renamed Column</strong> - CSV export includes TRUE/FALSE for edited nodes</li>
                 </ul>
                 
-                <h4>Duplicate Detection:</h4>
+                <h4>Duplicate Detection & Merging:</h4>
                 <ul>
                     <li><strong>Find Duplicates</strong> - Click "🔍 Find Duplicates" to scan for duplicate names</li>
                     <li><strong>Highlighting</strong> - Duplicate nodes are highlighted with yellow background</li>
                     <li><strong>Navigation Panel</strong> - Bottom-right panel shows all duplicates</li>
                     <li><strong>Click to Navigate</strong> - Click duplicate items to scroll to their location</li>
+                    <li><strong>Merge Duplicates</strong> - Click "Merge" to start merge process</li>
+                    <li><strong>Select Destination</strong> - Choose which node should be the merge target</li>
+                    <li><strong>Confirm Merge</strong> - Confirm selection to mark duplicates for merging</li>
+                    <li><strong>CSV Export</strong> - Merge information exported in "merge" column</li>
                 </ul>
                 
                 <h4>Supported Formats:</h4>
@@ -977,7 +1164,7 @@
             // Clear unsaved changes flag when initializing
             setUnsavedChanges(false);
             
-            // Add 'renamed' and 'german_changed' properties to all nodes
+            // Add 'renamed', 'german_changed', and 'mergeTarget' properties to all nodes
             function addRenamedProperty(nodes) {
                 nodes.forEach(node => {
                     if (!node.hasOwnProperty('renamed')) {
@@ -988,6 +1175,9 @@
                     }
                     if (!node.hasOwnProperty('german')) {
                         node.german = null;
+                    }
+                    if (!node.hasOwnProperty('mergeTarget')) {
+                        node.mergeTarget = null;
                     }
                     if (node.children && node.children.length > 0) {
                         addRenamedProperty(node.children);
@@ -1290,6 +1480,7 @@
                 const hasRenamedColumn = headers.includes('renamed');
                 const hasGermanColumn = headers.includes('name_de');
                 const hasGermanChangedColumn = headers.includes('german_changed');
+                const hasMergeColumn = headers.includes('merge');
 
                 updateProgress(50, 'Processing nodes...');
 
@@ -1316,6 +1507,7 @@
                     const germanChanged = hasGermanChangedColumn ? 
                         (cleanField(row.german_changed) === 'TRUE' || cleanField(row.german_changed) === 'true') : 
                         false;
+                    const mergeTarget = hasMergeColumn ? cleanField(row.merge) : null;
 
                     if (!nodeId || !name) continue;
 
@@ -1327,6 +1519,7 @@
                         renamed: renamed,
                         german: german,
                         german_changed: germanChanged,
+                        mergeTarget: mergeTarget,
                         children: []
                     };
 
@@ -1478,17 +1671,17 @@
         }
 
         function downloadSample() {
-            const sampleCSV = `name,id,pid,level,renamed,name_de,german_changed
-"Company","1",,"l1","FALSE","Unternehmen","FALSE"
-"Engineering","2","1","l2","FALSE","Entwicklung","FALSE"
-"Product","3","1","l2","FALSE","Produkt","FALSE"
-"Frontend Team","4","2","l3","FALSE","Frontend-Team","FALSE"
-"Backend Team","5","2","l3","FALSE","Backend-Team","FALSE"
-"Design Team","6","3","l3","FALSE","Design-Team","FALSE"
-"John Doe","7","4","l4","FALSE","Hans Müller","FALSE"
-"Jane Smith","8","4","l4","FALSE","Jana Schmidt","FALSE"
-"Bob Wilson","9","5","l4","FALSE","Robert Weber","FALSE"
-"Alice Johnson","10","6","l4","FALSE","Alicia Jung","FALSE"`;
+            const sampleCSV = `name,id,pid,level,renamed,name_de,german_changed,merge
+"Company","1",,"l1","FALSE","Unternehmen","FALSE",""
+"Engineering","2","1","l2","FALSE","Entwicklung","FALSE",""
+"Product","3","1","l2","FALSE","Produkt","FALSE",""
+"Frontend Team","4","2","l3","FALSE","Frontend-Team","FALSE",""
+"Backend Team","5","2","l3","FALSE","Backend-Team","FALSE",""
+"Design Team","6","3","l3","FALSE","Design-Team","FALSE",""
+"John Doe","7","4","l4","FALSE","Hans Müller","FALSE",""
+"Jane Smith","8","4","l4","FALSE","Jana Schmidt","FALSE",""
+"Bob Wilson","9","5","l4","FALSE","Robert Weber","FALSE",""
+"Alice Johnson","10","6","l4","FALSE","Alicia Jung","FALSE",""`;
 
             const blob = new Blob([sampleCSV], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
@@ -1679,7 +1872,7 @@
         }
 
         function generateCSVFromNodes() {
-            const rows = ['name,id,pid,level,renamed,name_de,german_changed'];
+            const rows = ['name,id,pid,level,renamed,name_de,german_changed,merge'];
             
             function addNodeToCSV(node) {
                 const name = `"${node.name.replace(/"/g, '""')}"`;
@@ -1689,8 +1882,9 @@
                 const renamed = node.renamed ? 'TRUE' : 'FALSE';
                 const german = node.german ? `"${node.german.replace(/"/g, '""')}"` : '';
                 const germanChanged = node.german_changed ? 'TRUE' : 'FALSE';
+                const merge = node.mergeTarget ? `"${node.mergeTarget}"` : '';
                 
-                rows.push(`${name},${id},${pid},${level},${renamed},${german},${germanChanged}`);
+                rows.push(`${name},${id},${pid},${level},${renamed},${german},${germanChanged},${merge}`);
                 
                 if (node.children && node.children.length > 0) {
                     node.children.forEach(child => addNodeToCSV(child));
@@ -1799,27 +1993,65 @@
                 return;
             }
             
-            let html = '';
+            let html = '<div style="margin-bottom: 15px; padding: 10px; background: #e8f4fd; border-radius: 5px; font-size: 14px;"><strong>Duplicate Merge Tool:</strong> Only leaf nodes (nodes without children) can be merged. Click "Merge" to select which node should be the merge destination.</div>';
             
             duplicateGroups.forEach((group, groupKey) => {
+                const mergeStatus = getMergeStatusForGroup(group, groupKey);
+                const hasActiveMerge = mergeStatus.hasPendingMerge;
+                const hasLeafNodes = group.nodes.some(node => isLeafNode(node));
+                const leafNodeCount = group.nodes.filter(node => isLeafNode(node)).length;
+                
                 html += `
-                    <div class="duplicate-group">
+                    <div class="duplicate-group" data-group-key="${groupKey}">
                         <div class="duplicate-group-header">
-                            "${group.nodeName}" in ${group.parentName} (${group.nodes.length} copies)
+                            <div>"${group.nodeName}" in ${group.parentName} (${leafNodeCount} mergeable of ${group.nodes.length} total)</div>
+                            <div class="merge-controls">
+                                ${hasLeafNodes && leafNodeCount >= 2 ? (
+                                    !hasActiveMerge ? 
+                                        `<button class="merge-btn" onclick="startMerge('${groupKey}')">Merge</button>` :
+                                        `<div class="merge-active">
+                                            <button class="merge-btn cancel" onclick="cancelMerge('${groupKey}')">❌ Cancel</button>
+                                            <button class="merge-btn confirm" onclick="confirmMerge('${groupKey}')" ${!mergeStatus.hasSelection ? 'disabled' : ''}>✅ Confirm</button>
+                                        </div>`
+                                ) : ''}
+                            </div>
                         </div>
+                        <div class="duplicate-items ${hasActiveMerge ? 'merge-mode' : ''}">
                 `;
                 
                 group.nodes.forEach((node, index) => {
                     const path = getNodePath(node);
+                    const isSelected = mergeStatus.selectedDestination === node.id;
+                    const willBeMerged = mergeStatus.sourceNodes.includes(node.id);
+                    const hasChildren = !isLeafNode(node);
+                    
+                    // Only show this node if it's a leaf node OR if there's no active merge
+                    if (hasActiveMerge && hasChildren) {
+                        return; // Skip non-leaf nodes when merge is active
+                    }
+                    
                     html += `
-                        <div class="duplicate-item" onclick="scrollToNode('${node.id}')">
-                            <div class="duplicate-item-name">${node.name} (ID: ${node.id})</div>
-                            <div class="duplicate-item-path">${path}</div>
+                        <div class="duplicate-item ${isSelected ? 'merge-destination' : ''} ${willBeMerged ? 'merge-source' : ''}" onclick="scrollToNode('${node.id}')">
+                            ${hasActiveMerge && !hasChildren ? `
+                                <div class="merge-checkbox-container">
+                                    <input type="radio" id="merge-${groupKey}-${node.id}" name="merge-destination-${groupKey}" value="${node.id}" 
+                                           onchange="selectMergeDestination('${groupKey}', '${node.id}')" 
+                                           ${isSelected ? 'checked' : ''}
+                                           onclick="event.stopPropagation()">
+                                    <label for="merge-${groupKey}-${node.id}">Select as destination</label>
+                                </div>
+                            ` : ''}
+                            <div class="duplicate-item-content">
+                                <div class="duplicate-item-name">${node.name} (ID: ${node.id})</div>
+                                <div class="duplicate-item-path">${path}</div>
+                                ${hasActiveMerge && isSelected && !hasChildren ? '<div class="merge-status">📍 DESTINATION</div>' : ''}
+                                ${hasActiveMerge && willBeMerged && !hasChildren ? '<div class="merge-status">➡️ Will merge to destination</div>' : ''}
+                            </div>
                         </div>
                     `;
                 });
                 
-                html += '</div>';
+                html += '</div></div>';
             });
             
             content.innerHTML = html;
@@ -1840,6 +2072,176 @@
             }
             
             return path.length > 0 ? path.join(' > ') : 'Root Level';
+        }
+
+        // Merge functionality - Simplified Implementation
+        let activeMerges = new Map(); // groupKey -> { selectedDestination, sourceNodes, hasSelection }
+
+        function startMerge(groupKey) {
+            console.log('startMerge called with groupKey:', groupKey);
+            
+            const group = duplicateGroups.get(groupKey);
+            console.log('found group:', group);
+            
+            if (!group) {
+                console.log('Group not found:', groupKey);
+                alert('Group not found: ' + groupKey);
+                return;
+            }
+            
+            // Check if there are at least 2 leaf nodes to merge
+            const leafNodes = group.nodes.filter(node => isLeafNode(node));
+            console.log('leafNodes count:', leafNodes.length);
+            
+            if (leafNodes.length < 2) {
+                alert('Cannot merge this group: Need at least 2 leaf nodes (nodes without children) to merge.');
+                return;
+            }
+            
+            // Initialize merge for this group
+            console.log('Setting up merge for groupKey:', groupKey);
+            activeMerges.set(groupKey, {
+                selectedDestination: null,
+                sourceNodes: [],
+                hasSelection: false
+            });
+            
+            console.log('activeMerges after setup:', activeMerges);
+            updateDuplicatePanel();
+            updatePerformanceInfo(`Started merge setup for "${group.nodeName}" (${leafNodes.length} leaf nodes available)`);
+        }
+
+        function isLeafNode(node) {
+            return !node.children || node.children.length === 0;
+        }
+
+        function canGroupBeMerged(group) {
+            // Check if all nodes in the group are leaf nodes
+            return group.nodes.every(node => isLeafNode(node));
+        }
+
+        function getMergeStatusForGroup(group, groupKey) {
+            const activeMerge = activeMerges.get(groupKey);
+            
+            if (!activeMerge) {
+                return {
+                    hasPendingMerge: false,
+                    hasSelection: false,
+                    selectedDestination: null,
+                    sourceNodes: []
+                };
+            }
+            
+            return {
+                hasPendingMerge: true,
+                hasSelection: activeMerge.hasSelection,
+                selectedDestination: activeMerge.selectedDestination,
+                sourceNodes: activeMerge.sourceNodes
+            };
+        }
+
+        function cancelMerge(groupKey) {
+            activeMerges.delete(groupKey);
+            updateDuplicatePanel();
+            updatePerformanceInfo('Merge cancelled');
+        }
+
+        function selectMergeDestination(groupKey, destinationNodeId) {
+            const merge = activeMerges.get(groupKey);
+            const group = duplicateGroups.get(groupKey);
+            
+            if (!merge || !group) {
+                console.log('Error: merge or group not found', { groupKey, merge, group });
+                alert('Error: Could not find merge data. Please try again.');
+                return;
+            }
+            
+            // Find the destination node and verify it's a leaf node
+            const destinationNode = group.nodes.find(node => node.id === destinationNodeId);
+            if (!destinationNode || !isLeafNode(destinationNode)) {
+                alert('Selected node is not a leaf node and cannot be used as merge destination.');
+                return;
+            }
+            
+            // Set the destination and calculate source nodes
+            merge.selectedDestination = destinationNodeId;
+            merge.sourceNodes = group.nodes
+                .filter(node => node.id !== destinationNodeId && isLeafNode(node))
+                .map(node => node.id);
+            merge.hasSelection = true;
+            
+            // Update the merge in the map
+            activeMerges.set(groupKey, merge);
+            
+            // Refresh the UI
+            updateDuplicatePanel();
+            updatePerformanceInfo(`Selected node ${destinationNodeId} as merge destination`);
+        }
+
+        function confirmMerge(groupKey) {
+            const merge = activeMerges.get(groupKey);
+            const group = duplicateGroups.get(groupKey);
+            
+            if (!merge || !group || !merge.selectedDestination) {
+                alert('Please select a destination node first.');
+                return;
+            }
+            
+            // Apply merge to the data
+            merge.sourceNodes.forEach(sourceNodeId => {
+                const sourceNode = flatNodesMap.get(sourceNodeId);
+                if (sourceNode) {
+                    sourceNode.mergeTarget = merge.selectedDestination;
+                }
+            });
+            
+            // Clean up
+            activeMerges.delete(groupKey);
+            
+            // Trigger auto-save
+            scheduleAutoSave();
+            
+            // Update UI
+            updateDuplicatePanel();
+            updateMergeIndicators(merge.sourceNodes, merge.selectedDestination);
+            updatePerformanceInfo(`Merged ${merge.sourceNodes.length} nodes to ${merge.selectedDestination}`);
+            
+            // Show success message
+            showConfirmationModal(
+                'Merge Completed',
+                `Successfully set up merge for ${merge.sourceNodes.length} duplicate nodes.\n\nThe merge information will be included in your CSV export in the "merge" column.`,
+                function() {} // Just close the modal
+            );
+        }
+
+        function updateMergeIndicators(sourceNodeIds, destinationNodeId) {
+            // Update indicators for source nodes that were merged
+            sourceNodeIds.forEach(nodeId => {
+                const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+                if (nodeElement) {
+                    nodeElement.classList.add('node-merged');
+                    const mergeIndicator = nodeElement.querySelector('.merge-indicator');
+                    if (mergeIndicator) {
+                        mergeIndicator.title = `This node will be merged to: ${destinationNodeId}`;
+                    }
+                }
+            });
+        }
+
+        function updateAllMergeIndicators() {
+            // Update indicators for all nodes that have mergeTarget set
+            flatNodesMap.forEach((node, nodeId) => {
+                if (node.mergeTarget) {
+                    const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+                    if (nodeElement) {
+                        nodeElement.classList.add('node-merged');
+                        const mergeIndicator = nodeElement.querySelector('.merge-indicator');
+                        if (mergeIndicator) {
+                            mergeIndicator.title = `This node will be merged to: ${node.mergeTarget}`;
+                        }
+                    }
+                }
+            });
         }
 
         function scrollToNode(nodeId) {
@@ -1971,6 +2373,9 @@
                 treeElement.appendChild(createNodeElement(rootNode, false));
             });
             
+            // Update merge indicators for all merged nodes
+            updateAllMergeIndicators();
+            
             // Re-apply duplicate detection if it was active
             if (duplicateDetectionActive) {
                 setTimeout(() => {
@@ -2027,6 +2432,11 @@
             editIndicator.className = 'edit-indicator';
             editIndicator.textContent = '✏️';
             
+            const mergeIndicator = document.createElement('span');
+            mergeIndicator.className = 'merge-indicator';
+            mergeIndicator.textContent = '⚡';
+            mergeIndicator.title = 'This node has been merged';
+            
             const info = document.createElement('span');
             info.className = 'node-info';
             info.textContent = `${node.level} | ID: ${node.id}`;
@@ -2037,6 +2447,7 @@
             nodeContent.appendChild(toggleBtn);
             nodeContent.appendChild(label);
             nodeContent.appendChild(editIndicator);
+            nodeContent.appendChild(mergeIndicator);
             
             // Add renamed indicator if node was renamed
             if (node.renamed) {
@@ -2055,6 +2466,12 @@
                 germanChangedIndicator.textContent = 'DE';
                 germanChangedIndicator.title = 'German translation has been modified';
                 nodeContent.appendChild(germanChangedIndicator);
+            }
+            
+            // Add merge indicator if node has been merged
+            if (node.mergeTarget) {
+                nodeDiv.classList.add('node-merged');
+                mergeIndicator.title = `This node will be merged to: ${node.mergeTarget}`;
             }
             
             nodeContent.appendChild(info);

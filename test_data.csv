@@ -1,0 +1,13 @@
+name,id,pid,level
+CEO,1,,1
+HR Department,2,1,2
+John Smith,3,2,3
+Jane Smith,4,2,3
+IT Department,5,1,2
+Tech Lead,6,5,3
+Developer A,7,6,4
+Developer B,8,6,4
+Marketing,9,1,2
+Marketing Manager,10,9,3
+John Smith,11,9,3
+Jane Smith,12,10,4
