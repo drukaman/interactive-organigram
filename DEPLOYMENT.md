@@ -44,6 +44,7 @@ git push -u origin main
 ## Step 4: Environment Configuration
 
 Render.com will automatically:
+
 - Set the `PORT` environment variable
 - Install dependencies with `npm install`
 - Start the server with `npm start`
@@ -56,6 +57,7 @@ After deployment (2-3 minutes), you'll get a URL like:
 ## 🔧 Deployment Features
 
 Your application includes:
+
 - ✅ **Express.js server** for production hosting
 - ✅ **Health check endpoint** at `/health`
 - ✅ **Static file serving** for all assets
@@ -65,6 +67,7 @@ Your application includes:
 ## 📁 Deployed Files
 
 The following files will be deployed:
+
 - `index.html` - Main application
 - `server.js` - Express.js server
 - `package.json` - Node.js dependencies
@@ -74,6 +77,7 @@ The following files will be deployed:
 ## 🛠️ Post-Deployment
 
 After deployment:
+
 1. Test the application functionality
 2. Try importing CSV files
 3. Test the editing features
@@ -83,6 +87,7 @@ After deployment:
 ## 🔄 Updates
 
 To update your deployed application:
+
 ```bash
 # Make changes to your code
 git add .

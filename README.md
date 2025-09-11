@@ -7,30 +7,35 @@ A powerful, web-based interactive organigram (organizational chart) application 
 ## ✨ Features
 
 ### 📁 **File Import & Export**
+
 - **CSV Import**: Drag & drop or click to import CSV files
 - **Excel Support**: Import .xlsx and .xls files (client-side CSV conversion)
 - **Smart Validation**: Automatic validation of required columns
 - **Export to CSV**: Download your edited data with all changes
 
 ### ✏️ **Inline Editing**
+
 - **Edit Mode**: Toggle editing mode to modify node labels
 - **Click to Edit**: Simply click any node name to edit it inline
 - **Auto-save**: Changes are automatically saved
 - **Real-time Updates**: See changes immediately in the hierarchy
 
 ### 🔍 **Duplicate Detection**
+
 - **Smart Analysis**: Finds duplicate names within the same parent category
 - **Visual Highlighting**: Duplicate nodes are highlighted with warning colors
 - **Navigation Panel**: Bottom-right panel shows all duplicates with navigation
 - **Path Context**: Shows full hierarchical path for each duplicate
 
 ### 🎯 **Interactive Navigation**
+
 - **Collapsible Tree**: Expand/collapse nodes to explore hierarchy
 - **Level Controls**: Show specific levels (L1, L1-2, etc.)
 - **Search Function**: Fast search across all nodes
 - **Smooth Scrolling**: Click duplicates to scroll to their location
 
 ### 🎨 **Modern Interface**
+
 - **Clean Design**: Minimalist white/grey color scheme
 - **Responsive Layout**: Works on desktop and mobile devices
 - **Fixed Toolbar**: Always-accessible controls at the top
@@ -39,21 +44,26 @@ A powerful, web-based interactive organigram (organizational chart) application 
 ## 🚀 Quick Start
 
 ### Online Version
+
 Visit the deployed application: [Your Render.com URL will go here]
 
 ### Local Development
+
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/[your-username]/interactive-organigram.git
 cd interactive-organigram
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the server:
+
 ```bash
 npm start
 ```
@@ -63,12 +73,14 @@ npm start
 ## 📊 File Format
 
 ### Required CSV Columns
+
 - **name**: Node name/description
 - **id**: Unique identifier for the node
 - **pid**: Parent ID (empty for root nodes)
 - **level**: Hierarchical level (l1, l2, l3, l4)
 
 ### Example CSV Structure
+
 ```csv
 name,id,pid,level
 "Company","1",,"l1"
@@ -83,32 +95,38 @@ name,id,pid,level
 ## 🛠️ Usage Guide
 
 ### 1. Import Your Data
+
 - Click **"📁 Import New File"** button
 - Drag & drop your CSV file or click to browse
 - Wait for validation and processing
 
 ### 2. Navigate the Hierarchy
+
 - Use **Show L1**, **Show L1-2** buttons to expand levels
 - Click **+/-** buttons on nodes to expand/collapse
 - Use the **search bar** to find specific nodes
 
 ### 3. Edit Node Names
+
 - Click **"✏️ Edit Mode"** to enable editing
 - Click any node name to edit it inline
 - Press Enter or click away to save changes
 
 ### 4. Find Duplicates
+
 - Click **"🔍 Find Duplicates"** to analyze data
 - Review highlighted duplicate nodes
 - Use the bottom-right panel to navigate between duplicates
 
 ### 5. Export Your Changes
+
 - Click **"💾 Export CSV"** to download edited data
 - File will be saved as `[original_name]_edited.csv`
 
 ## 🌐 Deployment
 
 ### Render.com Deployment
+
 1. Push your code to GitHub
 2. Connect your repository to Render.com
 3. Configure as a Web Service
@@ -116,6 +134,7 @@ name,id,pid,level
 5. Set start command: `npm start`
 
 ### Environment Variables
+
 - `PORT`: Server port (automatically set by Render.com)
 
 ## 🔧 Technical Stack
@@ -155,6 +174,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔄 Changelog
 
 ### v1.0.0 (2025-09-10)
+
 - Initial release
 - CSV import/export functionality
 - Inline editing capabilities

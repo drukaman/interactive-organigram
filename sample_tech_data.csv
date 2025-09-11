@@ -1,0 +1,14 @@
+id,name,parent_id
+1,tech company,
+2,ABS plastic division,1
+3,cmos sensor team,2
+4,LED lighting dept,2
+5,user interface group,1
+6,R&D department,1
+7,CEO office,1
+8,pdf processing unit,3
+9,html documentation team,3
+10,USB connector group,2
+11,wifi network team,1
+12,bluetooth device lab,4
+13,e-mail systems,1

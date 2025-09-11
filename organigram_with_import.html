@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,14 +22,15 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            padding-top: 80px; /* Space for fixed toolbar only */
+            padding-top: 80px;
+            /* Space for fixed toolbar only */
             margin: 0;
         }
 
         .toolbar {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 0;
             left: 0;
@@ -99,7 +101,7 @@
         .search-input:focus {
             outline: none;
             border-color: #999999;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
         }
 
         .import-section {
@@ -107,7 +109,7 @@
             margin: 20px;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border: 2px dashed #cccccc;
             text-align: center;
             transition: all 0.3s;
@@ -151,7 +153,7 @@
             padding: 15px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: none;
         }
 
@@ -182,7 +184,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
 
@@ -198,7 +200,7 @@
             margin: 20px;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
             min-height: 70vh;
         }
 
@@ -329,7 +331,7 @@
             max-height: 400px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border: 1px solid #e0e0e0;
             z-index: 200;
             display: none;
@@ -510,7 +512,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
         }
 
@@ -553,19 +555,20 @@
                 width: 100%;
                 max-width: 300px;
             }
-            
+
             body {
-                padding-top: 120px; /* More space for wrapped toolbar on mobile */
+                padding-top: 120px;
+                /* More space for wrapped toolbar on mobile */
             }
-            
+
             .toolbar {
                 padding: 10px 15px;
             }
-            
+
             .toolbar-section {
                 gap: 8px;
             }
-            
+
             .btn {
                 padding: 6px 12px;
                 font-size: 12px;
@@ -573,6 +576,7 @@
         }
     </style>
 </head>
+
 <body>
 
 
@@ -588,7 +592,8 @@
             <button class="btn" onclick="expandLevel(1)" id="expandL1">Show L1</button>
             <button class="btn" onclick="expandLevel(2)" id="expandL2">Show L1-2</button>
             <button class="btn" onclick="collapseAll()" id="collapseBtn">Collapse All</button>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..." oninput="searchNodes()">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes..."
+                oninput="searchNodes()">
             <button class="btn" onclick="clearSearch()">Clear</button>
         </div>
     </div>
@@ -598,7 +603,8 @@
             <h3>📁 Import Your Data</h3>
             <p>Click here or drag & drop your CSV or Excel file</p>
             <p><small>Required columns: name, id, pid, level</small></p>
-            <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileSelect(event)">
+            <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls"
+                onchange="handleFileSelect(event)">
         </div>
     </div>
 
@@ -650,14 +656,14 @@
                     <li><strong>pid</strong> - Parent ID (NULL/empty for root nodes)</li>
                     <li><strong>level</strong> - Hierarchical level (l1, l2, l3, l4)</li>
                 </ul>
-                
+
                 <h4>Example CSV:</h4>
                 <pre>name,id,pid,level
 "Company","1",NULL,"l1"
 "Engineering","2","1","l2"
 "Frontend Team","3","2","l3"
 "John Doe","4","3","l4"</pre>
-                
+
                 <h4>Editing Features:</h4>
                 <ul>
                     <li><strong>Edit Mode</strong> - Click "✏️ Edit Mode" to enable label editing</li>
@@ -665,7 +671,7 @@
                     <li><strong>Save Changes</strong> - Press Enter or click away to save</li>
                     <li><strong>Export CSV</strong> - Download your edited data as CSV</li>
                 </ul>
-                
+
                 <h4>Duplicate Detection:</h4>
                 <ul>
                     <li><strong>Find Duplicates</strong> - Click "🔍 Find Duplicates" to scan for duplicate names</li>
@@ -673,7 +679,7 @@
                     <li><strong>Navigation Panel</strong> - Bottom-right panel shows all duplicates</li>
                     <li><strong>Click to Navigate</strong> - Click duplicate items to scroll to their location</li>
                 </ul>
-                
+
                 <h4>Supported Formats:</h4>
                 <ul>
                     <li>CSV files (.csv)</li>
@@ -707,7 +713,7 @@
             flatNodesMap.clear();
             renderedNodes.clear();
             totalNodes = 0;
-            
+
             document.getElementById('tree').innerHTML = '';
             document.getElementById('tree').style.display = 'none';
             document.getElementById('statsGrid').innerHTML = '';
@@ -715,7 +721,7 @@
             document.getElementById('loading').innerHTML = 'Data cleared. Import a file to get started.';
             document.getElementById('error').style.display = 'none';
             document.getElementById('performanceInfo').style.display = 'none';
-            
+
             showImportSection();
         }
 
@@ -740,7 +746,7 @@
             originalFileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
             const fileName = file.name;
             const fileExt = fileName.split('.').pop().toLowerCase();
-            
+
             if (!['csv', 'xlsx', 'xls'].includes(fileExt)) {
                 showError('Unsupported file format. Please use CSV or Excel files.');
                 return;
@@ -750,7 +756,7 @@
             updateProgress(10, 'Reading file...');
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     console.log('File read successfully, size:', e.target.result.length);
                     if (fileExt === 'csv') {
@@ -766,7 +772,7 @@
                 }
             };
 
-            reader.onerror = function() {
+            reader.onerror = function () {
                 console.error('Error reading file');
                 showError('Error reading file. Please try again.');
                 showProgress(false);
@@ -778,7 +784,7 @@
         function processCSV(csvText) {
             try {
                 updateProgress(30, 'Parsing CSV data...');
-                
+
                 const lines = csvText.split('\n').filter(line => line.trim());
                 if (lines.length < 2) {
                     throw new Error('CSV file appears to be empty or invalid');
@@ -786,7 +792,7 @@
 
                 const headers = parseCSVLine(lines[0]);
                 const requiredColumns = ['name', 'id', 'pid', 'level'];
-                
+
                 // Validate headers
                 const missingColumns = requiredColumns.filter(col => !headers.includes(col));
                 if (missingColumns.length > 0) {
@@ -848,9 +854,9 @@
 
                 nodesData = hierarchy;
                 buildFlatNodeMap(nodesData);
-                
+
                 updateProgress(100, 'Complete!');
-                
+
                 setTimeout(() => {
                     showProgress(false);
                     hideImportSection();
@@ -871,11 +877,11 @@
             const result = [];
             let current = '';
             let inQuotes = false;
-            
+
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 const nextChar = line[i + 1];
-                
+
                 if (char === '"') {
                     if (inQuotes && nextChar === '"') {
                         current += '"';
@@ -890,7 +896,7 @@
                     current += char;
                 }
             }
-            
+
             result.push(current);
             return result;
         }
@@ -935,7 +941,7 @@
 
         // Drag and drop
         const importSection = document.getElementById('importSection');
-        
+
         importSection.addEventListener('dragover', (e) => {
             e.preventDefault();
             importSection.classList.add('dragover');
@@ -949,7 +955,7 @@
         importSection.addEventListener('drop', (e) => {
             e.preventDefault();
             importSection.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 processFile(files[0]);
@@ -994,7 +1000,7 @@
             editMode = !editMode;
             const button = event.target;
             const treeContainer = document.getElementById('tree');
-            
+
             if (editMode) {
                 button.textContent = '✅ Save Mode';
                 button.classList.add('primary');
@@ -1010,13 +1016,13 @@
 
         function makeNodeEditable(nodeElement, node) {
             if (!editMode) return;
-            
+
             const label = nodeElement.querySelector('.node-label');
             if (label.querySelector('input')) return; // Already editing
-            
+
             const currentText = label.textContent;
             label.innerHTML = `<input type="text" value="${currentText}" onblur="saveNodeEdit(this, '${node.id}')" onkeypress="handleEditKeypress(event, this, '${node.id}')">`;
-            
+
             const input = label.querySelector('input');
             input.focus();
             input.select();
@@ -1028,16 +1034,16 @@
                 input.focus();
                 return;
             }
-            
+
             // Update the node data
             const node = flatNodesMap.get(nodeId);
             if (node) {
                 node.name = newName;
-                
+
                 // Update the display
                 const label = input.parentElement;
                 label.textContent = newName;
-                
+
                 updatePerformanceInfo(`Updated node: ${nodeId} -> "${newName}"`);
             }
         }
@@ -1061,11 +1067,11 @@
                 alert('No data to export. Please import a file first.');
                 return;
             }
-            
+
             const csvContent = generateCSVFromNodes();
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = `${originalFileName}_edited.csv`;
@@ -1073,26 +1079,26 @@
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-            
+
             updatePerformanceInfo(`Exported ${totalNodes} nodes to CSV`);
         }
 
         function generateCSVFromNodes() {
             const rows = ['name,id,pid,level'];
-            
+
             function addNodeToCSV(node) {
                 const name = `"${node.name.replace(/"/g, '""')}"`;
                 const id = `"${node.id}"`;
                 const pid = node.pid ? `"${node.pid}"` : '';
                 const level = `"${node.level}"`;
-                
+
                 rows.push(`${name},${id},${pid},${level}`);
-                
+
                 if (node.children && node.children.length > 0) {
                     node.children.forEach(child => addNodeToCSV(child));
                 }
             }
-            
+
             nodesData.forEach(rootNode => addNodeToCSV(rootNode));
             return rows.join('\n');
         }
@@ -1101,7 +1107,7 @@
         function toggleDuplicateDetection() {
             duplicateDetectionActive = !duplicateDetectionActive;
             const button = event.target;
-            
+
             if (duplicateDetectionActive) {
                 button.textContent = '✅ Hide Duplicates';
                 button.classList.add('primary');
@@ -1119,26 +1125,26 @@
 
         function findAndHighlightDuplicates() {
             duplicateGroups.clear();
-            
+
             // Group nodes by parent and name
             const parentGroups = new Map();
-            
+
             flatNodesMap.forEach((node, nodeId) => {
                 const parentId = node.pid || 'ROOT';
                 const nodeName = node.name.toLowerCase().trim();
-                
+
                 if (!parentGroups.has(parentId)) {
                     parentGroups.set(parentId, new Map());
                 }
-                
+
                 const parentGroup = parentGroups.get(parentId);
                 if (!parentGroup.has(nodeName)) {
                     parentGroup.set(nodeName, []);
                 }
-                
+
                 parentGroup.get(nodeName).push(node);
             });
-            
+
             // Find duplicates within each parent group
             parentGroups.forEach((nameGroups, parentId) => {
                 nameGroups.forEach((nodes, nodeName) => {
@@ -1153,7 +1159,7 @@
                     }
                 });
             });
-            
+
             // Highlight duplicate nodes
             duplicateGroups.forEach(group => {
                 group.nodes.forEach(node => {
@@ -1163,7 +1169,7 @@
                     }
                 });
             });
-            
+
             updateDuplicatePanel();
         }
 
@@ -1184,14 +1190,14 @@
 
         function updateDuplicatePanel() {
             const content = document.getElementById('duplicateContent');
-            
+
             if (duplicateGroups.size === 0) {
                 content.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No duplicates found within the same categories.</div>';
                 return;
             }
-            
+
             let html = '';
-            
+
             duplicateGroups.forEach((group, groupKey) => {
                 html += `
                     <div class="duplicate-group">
@@ -1199,7 +1205,7 @@
                             "${group.nodeName}" in ${group.parentName} (${group.nodes.length} copies)
                         </div>
                 `;
-                
+
                 group.nodes.forEach((node, index) => {
                     const path = getNodePath(node);
                     html += `
@@ -1209,17 +1215,17 @@
                         </div>
                     `;
                 });
-                
+
                 html += '</div>';
             });
-            
+
             content.innerHTML = html;
         }
 
         function getNodePath(node) {
             const path = [];
             let current = node;
-            
+
             while (current && current.pid) {
                 const parent = flatNodesMap.get(current.pid);
                 if (parent) {
@@ -1229,14 +1235,14 @@
                     break;
                 }
             }
-            
+
             return path.length > 0 ? path.join(' > ') : 'Root Level';
         }
 
         function scrollToNode(nodeId) {
             // First expand the path to the node
             expandPathToNode(nodeId);
-            
+
             // Wait a bit for the expansion to complete, then scroll
             setTimeout(() => {
                 const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
@@ -1247,19 +1253,19 @@
                     nodeContent.style.backgroundColor = '#007bff';
                     nodeContent.style.color = 'white';
                     nodeContent.style.transform = 'scale(1.02)';
-                    
+
                     // Scroll to the node
-                    nodeElement.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
+                    nodeElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
                     });
-                    
+
                     // Remove highlight after a delay
                     setTimeout(() => {
                         nodeContent.style.backgroundColor = '';
                         nodeContent.style.color = '';
                         nodeContent.style.transform = '';
-                        
+
                         // Restore duplicate highlighting if it was there
                         if (duplicateDetectionActive) {
                             setTimeout(() => {
@@ -1267,13 +1273,13 @@
                             }, 300);
                         }
                     }, 1500);
-                    
+
                     updatePerformanceInfo(`Navigated to node: ${nodeId}`);
                 }
             }, 200);
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('helpModal');
             if (event.target === modal) {
                 modal.style.display = 'none';
@@ -1301,7 +1307,7 @@
                     node.children.forEach(child => processNode(child));
                 }
             }
-            
+
             totalNodes = 0;
             flatNodesMap.clear();
             nodes.forEach(rootNode => processNode(rootNode));
@@ -1340,7 +1346,7 @@
 
         function calculateStats(data) {
             const levels = {};
-            
+
             flatNodesMap.forEach(node => {
                 levels[node.level] = (levels[node.level] || 0) + 1;
             });
@@ -1357,18 +1363,18 @@
             const treeElement = document.getElementById('tree');
             treeElement.innerHTML = '';
             renderedNodes.clear();
-            
+
             nodesData.forEach(rootNode => {
                 treeElement.appendChild(createNodeElement(rootNode, false));
             });
-            
+
             // Re-apply duplicate detection if it was active
             if (duplicateDetectionActive) {
                 setTimeout(() => {
                     findAndHighlightDuplicates();
                 }, 100);
             }
-            
+
             updatePerformanceInfo(`Rendered ${nodesData.length} root nodes`);
         }
 
@@ -1376,17 +1382,17 @@
             const nodeDiv = document.createElement('div');
             nodeDiv.className = `node level-${node.level}`;
             nodeDiv.setAttribute('data-id', node.id);
-            
+
             const hasChildren = node.children && node.children.length > 0;
-            
+
             const nodeContent = document.createElement('div');
             nodeContent.className = 'node-content';
             nodeContent.onclick = () => toggleNode(node.id);
-            
+
             const toggleBtn = document.createElement('button');
             toggleBtn.className = `toggle-btn ${hasChildren ? '' : 'no-children'}`;
             toggleBtn.innerHTML = hasChildren ? (isExpanded ? '−' : '+') : '●';
-            
+
             const label = document.createElement('span');
             label.className = 'node-label editable';
             label.textContent = node.name;
@@ -1394,39 +1400,39 @@
                 e.stopPropagation();
                 makeNodeEditable(nodeDiv, node);
             };
-            
+
             const editIndicator = document.createElement('span');
             editIndicator.className = 'edit-indicator';
             editIndicator.textContent = '✏️';
-            
+
             const info = document.createElement('span');
             info.className = 'node-info';
             info.textContent = `${node.level} | ID: ${node.id}`;
             if (hasChildren) {
                 info.textContent += ` | ${node.children.length} children`;
             }
-            
+
             nodeContent.appendChild(toggleBtn);
             nodeContent.appendChild(label);
             nodeContent.appendChild(editIndicator);
             nodeContent.appendChild(info);
             nodeDiv.appendChild(nodeContent);
-            
+
             if (hasChildren && isExpanded) {
                 const childrenDiv = document.createElement('div');
                 childrenDiv.className = 'children expanded';
-                
+
                 node.children.forEach(child => {
                     childrenDiv.appendChild(createNodeElement(child, false));
                 });
-                
+
                 nodeDiv.appendChild(childrenDiv);
             } else if (hasChildren) {
                 const childrenDiv = document.createElement('div');
                 childrenDiv.className = 'children collapsed';
                 nodeDiv.appendChild(childrenDiv);
             }
-            
+
             renderedNodes.add(node.id);
             return nodeDiv;
         }
@@ -1434,14 +1440,14 @@
         function toggleNode(nodeId) {
             const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
             if (!nodeElement) return;
-            
+
             const node = flatNodesMap.get(nodeId);
             if (!node || !node.children || node.children.length === 0) return;
-            
+
             const childrenDiv = nodeElement.querySelector('.children');
             const toggleBtn = nodeElement.querySelector('.toggle-btn');
             const isExpanded = childrenDiv.classList.contains('expanded');
-            
+
             if (isExpanded) {
                 childrenDiv.classList.remove('expanded');
                 childrenDiv.classList.add('collapsed');
@@ -1452,7 +1458,7 @@
                         childrenDiv.appendChild(createNodeElement(child, false));
                     });
                 }
-                
+
                 childrenDiv.classList.remove('collapsed');
                 childrenDiv.classList.add('expanded');
                 toggleBtn.innerHTML = '−';
@@ -1461,7 +1467,7 @@
 
         function expandLevel(maxLevel) {
             collapseAll();
-            
+
             document.querySelectorAll('.node').forEach(nodeElement => {
                 const nodeId = nodeElement.getAttribute('data-id');
                 const node = flatNodesMap.get(nodeId);
@@ -1472,7 +1478,7 @@
                     }
                 }
             });
-            
+
             updatePerformanceInfo(`Expanded to level ${maxLevel}`);
         }
 
@@ -1481,43 +1487,43 @@
                 const nodeElement = childrenDiv.closest('.node');
                 const nodeId = nodeElement.getAttribute('data-id');
                 const toggleBtn = nodeElement.querySelector('.toggle-btn');
-                
+
                 childrenDiv.classList.remove('expanded');
                 childrenDiv.classList.add('collapsed');
                 toggleBtn.innerHTML = '+';
             });
-            
+
             updatePerformanceInfo('Collapsed all nodes');
         }
 
         function searchNodes() {
             const searchInput = document.getElementById('searchInput');
             searchTerm = searchInput.value.toLowerCase().trim();
-            
+
             document.querySelectorAll('.node-content.highlighted').forEach(element => {
                 element.classList.remove('highlighted');
             });
-            
+
             if (searchTerm === '') return;
-            
+
             let matchCount = 0;
             const startTime = Date.now();
-            
+
             flatNodesMap.forEach((node, nodeId) => {
                 if (node.name.toLowerCase().includes(searchTerm)) {
                     matchCount++;
                     expandPathToNode(nodeId);
-                    
+
                     const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
                     if (nodeElement) {
                         nodeElement.classList.add('highlighted');
                     }
                 }
             });
-            
+
             const searchTime = Date.now() - startTime;
             updatePerformanceInfo(`Found ${matchCount} matches in ${searchTime}ms`);
-            
+
             setTimeout(() => {
                 const firstMatch = document.querySelector('.node-content.highlighted');
                 if (firstMatch) {
@@ -1529,12 +1535,12 @@
         function expandPathToNode(nodeId) {
             const path = [];
             let currentNode = flatNodesMap.get(nodeId);
-            
+
             while (currentNode && currentNode.pid) {
                 path.unshift(currentNode.pid);
                 currentNode = flatNodesMap.get(currentNode.pid);
             }
-            
+
             path.forEach(id => {
                 const nodeElement = document.querySelector(`[data-id="${id}"]`);
                 if (nodeElement) {
@@ -1556,7 +1562,7 @@
         }
 
         // Try to load default data on startup
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             try {
                 const response = await fetch('nodes_hierarchy.json');
                 if (response.ok) {
@@ -1577,9 +1583,9 @@
         });
 
         // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.ctrlKey || event.metaKey) {
-                switch(event.key) {
+                switch (event.key) {
                     case 'f':
                         event.preventDefault();
                         document.getElementById('searchInput').focus();
@@ -1596,4 +1602,5 @@
         });
     </script>
 </body>
+
 </html>

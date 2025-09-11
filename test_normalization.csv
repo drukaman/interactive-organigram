@@ -1,0 +1,13 @@
+name,id,pid,level
+CEO,1,,1
+human resources department,2,1,2
+john smith,3,2,3
+JANE DOE,4,2,3
+information technology,5,1,2
+tech lead senior,6,5,3
+e-mail administrator,7,6,4
+database SPECIALIST,8,6,4
+marketing team,9,1,2
+marketing manager,10,9,3
+social media coordinator,11,9,3
+i-business analyst,12,10,4

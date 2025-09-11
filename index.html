@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,14 +22,15 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            padding-top: 80px; /* Space for fixed toolbar only */
+            padding-top: 80px;
+            /* Space for fixed toolbar only */
             margin: 0;
         }
 
         .toolbar {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 0;
             left: 0;
@@ -99,7 +101,7 @@
         .search-input:focus {
             outline: none;
             border-color: #999999;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
         }
 
         .import-section {
@@ -107,7 +109,7 @@
             margin: 20px;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border: 2px dashed #cccccc;
             text-align: center;
             transition: all 0.3s;
@@ -151,7 +153,7 @@
             padding: 15px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: none;
         }
 
@@ -182,7 +184,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
 
@@ -198,7 +200,7 @@
             margin: 20px;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
             min-height: 70vh;
         }
 
@@ -220,7 +222,8 @@
             transition: all 0.3s ease;
             cursor: pointer;
             border: 2px solid transparent;
-            min-width: 0; /* Allow flex items to shrink */
+            min-width: 0;
+            /* Allow flex items to shrink */
         }
 
         .node-content:hover {
@@ -347,13 +350,16 @@
         }
 
         @keyframes mergeFlash {
-            0%, 100% { 
-                opacity: 1; 
+
+            0%,
+            100% {
+                opacity: 1;
                 transform: scale(1);
                 background: rgba(255, 107, 53, 0.1);
             }
-            50% { 
-                opacity: 0.8; 
+
+            50% {
+                opacity: 0.8;
                 transform: scale(1.05);
                 background: rgba(255, 107, 53, 0.2);
             }
@@ -535,10 +541,13 @@
         }
 
         @keyframes searchPulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 0.8;
                 transform: translateX(0);
             }
+
             50% {
                 opacity: 1;
                 transform: translateX(-5px);
@@ -579,7 +588,7 @@
             max-height: 400px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border: 1px solid #e0e0e0;
             z-index: 200;
             display: none;
@@ -768,6 +777,203 @@
             cursor: pointer;
         }
 
+        /* Normalization Panel Styles */
+        .normalization-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #e0e0e0;
+            z-index: 300;
+            display: none;
+        }
+
+        .normalization-panel-header {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .normalization-panel-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .normalization-panel-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .normalization-panel-close:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .normalization-panel-content {
+            max-height: 50vh;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .normalization-panel-footer {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .normalization-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+        }
+
+        .normalization-checkbox {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #007ACC;
+            cursor: pointer;
+        }
+
+        .normalization-item.selected {
+            background: #e8f4fd;
+            border-color: #007ACC;
+        }
+
+        .normalization-item.unselected {
+            background: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .normalization-before {
+            flex: 1;
+            font-family: monospace;
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .normalization-arrow {
+            margin: 0 15px;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .normalization-after {
+            flex: 1;
+            font-family: monospace;
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .normalization-summary {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+
+        .normalization-controls {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #007ACC;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-indicator p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .preserved-terms {
+            margin-left: 15px;
+            font-size: 11px;
+            color: #28a745;
+            background: #d4edda;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #c3e6cb;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .selection-summary {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
         .duplicate-item-content {
             padding: 10px 12px;
         }
@@ -913,7 +1119,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
         }
 
@@ -956,19 +1162,20 @@
                 width: 100%;
                 max-width: 300px;
             }
-            
+
             body {
-                padding-top: 120px; /* More space for wrapped toolbar on mobile */
+                padding-top: 120px;
+                /* More space for wrapped toolbar on mobile */
             }
-            
+
             .toolbar {
                 padding: 10px 15px;
             }
-            
+
             .toolbar-section {
                 gap: 8px;
             }
-            
+
             .btn {
                 padding: 6px 12px;
                 font-size: 12px;
@@ -976,6 +1183,7 @@
         }
     </style>
 </head>
+
 <body>
 
 
@@ -984,12 +1192,17 @@
             <button class="btn primary" onclick="showImportSection()">📁 Import CSV File</button>
             <button class="btn" onclick="clearDataWithConfirmation()" id="clearBtn" disabled>🗑️ Clear Data</button>
             <button class="btn" onclick="exportToCSV()" id="exportBtn" disabled>💾 Export CSV</button>
+            <button class="btn" onclick="showNormalizationPreview()" id="normalizeBtn" disabled>🔧 Normalize
+                Labels</button>
             <button class="btn" onclick="toggleEditMode()" id="editBtn" disabled>✏️ Edit Mode</button>
-            <button class="btn" onclick="toggleDuplicateDetection()" id="duplicateBtn" disabled>🔍 Find Duplicates</button>
+            <button class="btn" onclick="toggleDuplicateDetection()" id="duplicateBtn" disabled>🔍 Find
+                Duplicates</button>
             <button class="btn" onclick="expandLevel(1)" id="expandL1" disabled>Show L1</button>
             <button class="btn" onclick="expandLevel(2)" id="expandL2" disabled>Show L1-2</button>
             <button class="btn" onclick="collapseAll()" id="collapseBtn" disabled>Collapse All</button>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search nodes (English/German) - Press Enter to search..." onkeypress="handleSearchKeypress(event)" disabled>
+            <input type="text" class="search-input" id="searchInput"
+                placeholder="Search nodes (English/German) - Press Enter to search..."
+                onkeypress="handleSearchKeypress(event)" disabled>
             <button class="btn" onclick="clearSearch()" id="clearSearchBtn" disabled>Clear</button>
             <span id="autoSaveIndicator" class="auto-save-indicator"></span>
         </div>
@@ -999,8 +1212,10 @@
         <div class="file-drop-area" onclick="triggerFileInput()">
             <h3>📁 Import Your Data</h3>
             <p>Click here or drag & drop your CSV or Excel file to get started</p>
-            <p><small>Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed, merge</small></p>
-            <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" onchange="handleFileSelect(event)">
+            <p><small>Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed, merge</small>
+            </p>
+            <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls"
+                onchange="handleFileSelect(event)">
         </div>
         <div style="text-align: center; margin-top: 15px;">
             <button class="btn" onclick="showHelpModal()" style="margin-right: 10px;">❓ Need Help?</button>
@@ -1022,6 +1237,26 @@
 
     <div class="stats-grid" id="statsGrid">
         <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <!-- DEBUG SECTION -->
+    <div style="background: #f8f9fa; padding: 20px; margin: 20px; border-radius: 8px; border-left: 4px solid #007bff;">
+        <h4>🔧 Normalization Test</h4>
+        <div style="margin: 10px 0;">
+            <input type="text" id="testInput" placeholder="Enter text to normalize (e.g., 'DC-AC Inverter')" 
+                   style="width: 60%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <button onclick="testNormalization()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; margin-left: 10px;">Test</button>
+        </div>
+        <div style="margin: 5px 0;">
+            <button onclick="quickTest('DC-AC Inverter')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">DC-AC Inverter</button>
+            <button onclick="quickTest('DC-DC/AC-DC Converter')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">DC-DC/AC-DC Converter</button>
+            <button onclick="quickTest('Motor control ECU')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">Motor control ECU</button>
+            <button onclick="quickTest('Power control ECU')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">Power control ECU</button>
+        </div>
+        <div id="testResults" style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px; font-family: monospace; white-space: pre-wrap;"></div>
+        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 4px; font-size: 12px;">
+            <strong>Browser Console Test:</strong> Open browser console and run: <code>testCDP()</code>
+        </div>
     </div>
 
     <div class="tree-container">
@@ -1052,6 +1287,21 @@
         </div>
     </div>
 
+    <!-- Label Normalization Panel -->
+    <div id="normalizationPanel" class="normalization-panel">
+        <div class="normalization-panel-header">
+            <h3>🔧 Label Normalization</h3>
+            <button class="normalization-panel-close" onclick="closeNormalizationPanel()">×</button>
+        </div>
+        <div class="normalization-panel-content" id="normalizationContent">
+            <!-- Normalization preview will be populated here -->
+        </div>
+        <div class="normalization-panel-footer">
+            <button class="btn cancel" onclick="closeNormalizationPanel()">❌ Dismiss</button>
+            <button class="btn primary" onclick="applyNormalization()">✅ Confirm Changes</button>
+        </div>
+    </div>
+
     <!-- Help Modal -->
     <div id="helpModal" class="modal">
         <div class="modal-content">
@@ -1067,7 +1317,7 @@
                     <li><strong>pid</strong> - Parent ID (NULL/empty for root nodes)</li>
                     <li><strong>level</strong> - Hierarchical level (l1, l2, l3, l4)</li>
                 </ul>
-                
+
                 <h4>Optional Columns:</h4>
                 <ul>
                     <li><strong>name_de</strong> - German translation of the node name</li>
@@ -1075,14 +1325,14 @@
                     <li><strong>german_changed</strong> - TRUE/FALSE flag for modified German translations</li>
                     <li><strong>merge</strong> - ID of the target node for duplicate merging</li>
                 </ul>
-                
+
                 <h4>Example CSV:</h4>
                 <pre>name,id,pid,level,name_de,german_changed,merge
 "Company","1",NULL,"l1","Unternehmen","FALSE",""
 "Engineering","2","1","l2","Entwicklung","FALSE",""
 "Frontend Team","3","2","l3","Frontend-Team","FALSE",""
 "John Doe","4","3","l4","Hans Müller","FALSE",""</pre>
-                
+
                 <h4>Editing Features:</h4>
                 <ul>
                     <li><strong>Edit Mode</strong> - Click "✏️ Edit Mode" to enable label editing</li>
@@ -1090,20 +1340,24 @@
                     <li><strong>Dual Language</strong> - Edit both English name and German translation</li>
                     <li><strong>Save Changes</strong> - Press Enter to move between fields or click away to save</li>
                     <li><strong>Auto-Save</strong> - Changes are automatically saved to browser cache</li>
-                    <li><strong>Renamed Tracking</strong> - Edited English names are marked with ✏️ and "renamed" column set to TRUE</li>
-                    <li><strong>German Change Tracking</strong> - Modified German translations are marked with "DE" and "german_changed" column set to TRUE</li>
-                    <li><strong>Export CSV</strong> - Download your edited data as CSV with both renamed and German change flags</li>
+                    <li><strong>Renamed Tracking</strong> - Edited English names are marked with ✏️ and "renamed" column
+                        set to TRUE</li>
+                    <li><strong>German Change Tracking</strong> - Modified German translations are marked with "DE" and
+                        "german_changed" column set to TRUE</li>
+                    <li><strong>Export CSV</strong> - Download your edited data as CSV with both renamed and German
+                        change flags</li>
                 </ul>
-                
+
                 <h4>German Translation Features:</h4>
                 <ul>
                     <li><strong>Side-by-Side Display</strong> - Shows "English | German" on the same row</li>
                     <li><strong>Optional Field</strong> - German translation is optional for each node</li>
                     <li><strong>Import/Export</strong> - Full support for German column in CSV files</li>
-                    <li><strong>Inline Editing</strong> - Edit both languages simultaneously with side-by-side inputs</li>
+                    <li><strong>Inline Editing</strong> - Edit both languages simultaneously with side-by-side inputs
+                    </li>
                     <li><strong>Bilingual Search</strong> - Search works in both English and German text</li>
                 </ul>
-                
+
                 <h4>Auto-Save Features:</h4>
                 <ul>
                     <li><strong>Session Cache</strong> - All changes saved automatically to browser storage</li>
@@ -1111,7 +1365,7 @@
                     <li><strong>Status Display</strong> - Auto-save indicator shows save status in toolbar</li>
                     <li><strong>Renamed Column</strong> - CSV export includes TRUE/FALSE for edited nodes</li>
                 </ul>
-                
+
                 <h4>Duplicate Detection & Merging:</h4>
                 <ul>
                     <li><strong>Find Duplicates</strong> - Click "🔍 Find Duplicates" to scan for duplicate names</li>
@@ -1123,7 +1377,18 @@
                     <li><strong>Confirm Merge</strong> - Confirm selection to mark duplicates for merging</li>
                     <li><strong>CSV Export</strong> - Merge information exported in "merge" column</li>
                 </ul>
-                
+
+                <h4>Label Normalization:</h4>
+                <ul>
+                    <li><strong>Normalize Labels</strong> - Click "🔧 Normalize Labels" to standardize text formatting
+                    </li>
+                    <li><strong>Proper Case</strong> - Converts labels to proper case (First Letter Of Each Word)</li>
+                    <li><strong>Exception Handling</strong> - Words like "e-mail" or "i-lithium" remain unchanged</li>
+                    <li><strong>Preview Changes</strong> - Review all proposed changes before applying</li>
+                    <li><strong>Edit Markers</strong> - Normalized nodes are marked with edit indicators</li>
+                    <li><strong>CSV Export</strong> - Normalized labels included in exported data</li>
+                </ul>
+
                 <h4>Supported Formats:</h4>
                 <ul>
                     <li>CSV files (.csv)</li>
@@ -1144,7 +1409,7 @@
         let originalFileName = 'organigram_data';
         let duplicateDetectionActive = false;
         let duplicateGroups = new Map();
-        
+
         // Auto-save and session management
         let sessionData = {
             originalData: null,
@@ -1160,10 +1425,10 @@
             sessionData.originalData = JSON.parse(JSON.stringify(data));
             sessionData.modifiedNodes.clear();
             sessionData.lastSaved = Date.now();
-            
+
             // Clear unsaved changes flag when initializing
             setUnsavedChanges(false);
-            
+
             // Add 'renamed', 'german_changed', and 'mergeTarget' properties to all nodes
             function addRenamedProperty(nodes) {
                 nodes.forEach(node => {
@@ -1184,12 +1449,12 @@
                     }
                 });
             }
-            
+
             addRenamedProperty(nodesData);
             saveSession();
             updatePerformanceInfo('Session initialized - Auto-save enabled');
         }
-        
+
         function saveSession() {
             try {
                 const sessionState = {
@@ -1199,13 +1464,13 @@
                     fileName: originalFileName,
                     timestamp: new Date().toISOString()
                 };
-                
+
                 localStorage.setItem('organigram_session', JSON.stringify(sessionState));
                 sessionData.lastSaved = Date.now();
-                
+
                 // Clear unsaved changes flag
                 setUnsavedChanges(false);
-                
+
                 // Update UI indicator
                 updateAutoSaveIndicator('saved');
             } catch (error) {
@@ -1213,36 +1478,36 @@
                 updateAutoSaveIndicator('error');
             }
         }
-        
+
         function loadSession() {
             try {
                 const saved = localStorage.getItem('organigram_session');
                 if (!saved) return false;
-                
+
                 const sessionState = JSON.parse(saved);
                 sessionData.originalData = sessionState.originalData;
                 sessionData.modifiedNodes = new Map(sessionState.modifiedNodes);
                 sessionData.lastSaved = sessionState.lastSaved;
-                
+
                 if (sessionState.fileName) {
                     originalFileName = sessionState.fileName;
                 }
-                
+
                 return true;
             } catch (error) {
                 console.error('Failed to load session:', error);
                 return false;
             }
         }
-        
+
         function markNodeAsRenamed(nodeId, newName, oldName) {
             const node = flatNodesMap.get(nodeId);
             if (!node) return;
-            
+
             // Update the node data
             node.name = newName;
             node.renamed = true;
-            
+
             // Track the modification
             sessionData.modifiedNodes.set(nodeId, {
                 originalName: oldName,
@@ -1250,22 +1515,22 @@
                 timestamp: Date.now(),
                 renamed: true
             });
-            
+
             // Trigger auto-save
             scheduleAutoSave();
-            
+
             // Update visual indicator
             updateNodeVisualState(nodeId);
         }
-        
+
         function markGermanAsChanged(nodeId, newGerman, oldGerman) {
             const node = flatNodesMap.get(nodeId);
             if (!node) return;
-            
+
             // Update the node data
             node.german = newGerman || null;
             node.german_changed = true;
-            
+
             // Track the modification
             const existingModification = sessionData.modifiedNodes.get(nodeId) || {};
             sessionData.modifiedNodes.set(nodeId, {
@@ -1275,56 +1540,56 @@
                 timestamp: Date.now(),
                 german_changed: true
             });
-            
+
             // Trigger auto-save
             scheduleAutoSave();
-            
+
             // Update visual indicator
             updateNodeVisualState(nodeId);
         }
-        
+
         function scheduleAutoSave() {
             if (autoSaveTimeout) {
                 clearTimeout(autoSaveTimeout);
             }
-            
+
             // Mark as having unsaved changes
             setUnsavedChanges(true);
             updateAutoSaveIndicator('saving');
-            
+
             autoSaveTimeout = setTimeout(() => {
                 saveSession();
                 setUnsavedChanges(false); // Clear unsaved flag after successful save
                 updatePerformanceInfo(`Auto-saved ${sessionData.modifiedNodes.size} modifications`);
             }, AUTO_SAVE_DELAY);
         }
-        
+
         function updateAutoSaveIndicator(status) {
             const indicator = document.getElementById('autoSaveIndicator');
             if (!indicator) return;
-            
+
             const indicators = {
                 'saving': '💾 Saving...',
                 'saved': '✅ Saved',
                 'error': '❌ Save Error'
             };
-            
+
             indicator.textContent = indicators[status] || '';
             indicator.className = `auto-save-indicator ${status}`;
         }
-        
+
         function updateNodeVisualState(nodeId) {
             const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
             if (!nodeElement) return;
-            
+
             const node = flatNodesMap.get(nodeId);
             const content = nodeElement.querySelector('.node-content');
             if (!content) return;
-            
+
             // Handle renamed indicator
             if (node && node.renamed) {
                 nodeElement.classList.add('node-renamed');
-                
+
                 // Add renamed indicator if not present
                 if (!content.querySelector('.renamed-indicator')) {
                     const indicator = document.createElement('span');
@@ -1334,7 +1599,7 @@
                     content.appendChild(indicator);
                 }
             }
-            
+
             // Handle German changed indicator
             if (node && node.german_changed) {
                 // Add German changed indicator if not present
@@ -1347,7 +1612,7 @@
                 }
             }
         }
-        
+
         function getModificationStats() {
             return {
                 totalModifications: sessionData.modifiedNodes.size,
@@ -1355,7 +1620,7 @@
                 hasUnsavedChanges: autoSaveTimeout !== null
             };
         }
-        
+
         function clearSession() {
             localStorage.removeItem('organigram_session');
             sessionData.originalData = null;
@@ -1376,27 +1641,27 @@
             flatNodesMap.clear();
             renderedNodes.clear();
             totalNodes = 0;
-            
+
             // Clear session data
             clearSession();
-            
+
             document.getElementById('tree').innerHTML = '';
             document.getElementById('tree').style.display = 'none';
             document.getElementById('statsGrid').innerHTML = '';
             document.getElementById('loading').style.display = 'block';
             document.getElementById('error').style.display = 'none';
             document.getElementById('performanceInfo').style.display = 'none';
-            
+
             // Reset duplicate detection
             if (duplicateDetectionActive) {
                 toggleDuplicateDetection();
             }
-            
+
             // Reset edit mode
             if (editMode) {
                 toggleEditMode();
             }
-            
+
             showImportSection();
             updatePerformanceInfo('Data cleared - Please import a CSV file to get started');
             updateToolbarState(false); // Disable data-dependent buttons
@@ -1423,7 +1688,7 @@
             originalFileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
             const fileName = file.name;
             const fileExt = fileName.split('.').pop().toLowerCase();
-            
+
             if (!['csv', 'xlsx', 'xls'].includes(fileExt)) {
                 showError('Unsupported file format. Please use CSV or Excel files.');
                 return;
@@ -1433,7 +1698,7 @@
             updateProgress(10, 'Reading file...');
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 try {
                     console.log('File read successfully, size:', e.target.result.length);
                     if (fileExt === 'csv') {
@@ -1449,7 +1714,7 @@
                 }
             };
 
-            reader.onerror = function() {
+            reader.onerror = function () {
                 console.error('Error reading file');
                 showError('Error reading file. Please try again.');
                 showProgress(false);
@@ -1461,7 +1726,7 @@
         function processCSV(csvText) {
             try {
                 updateProgress(30, 'Parsing CSV data...');
-                
+
                 const lines = csvText.split('\n').filter(line => line.trim());
                 if (lines.length < 2) {
                     throw new Error('CSV file appears to be empty or invalid');
@@ -1469,7 +1734,7 @@
 
                 const headers = parseCSVLine(lines[0]);
                 const requiredColumns = ['name', 'id', 'pid', 'level'];
-                
+
                 // Validate headers
                 const missingColumns = requiredColumns.filter(col => !headers.includes(col));
                 if (missingColumns.length > 0) {
@@ -1500,12 +1765,12 @@
                     const pid = cleanField(row.pid);
                     const name = cleanField(row.name);
                     const level = cleanField(row.level);
-                    const renamed = hasRenamedColumn ? 
-                        (cleanField(row.renamed) === 'TRUE' || cleanField(row.renamed) === 'true') : 
+                    const renamed = hasRenamedColumn ?
+                        (cleanField(row.renamed) === 'TRUE' || cleanField(row.renamed) === 'true') :
                         false;
                     const german = hasGermanColumn ? cleanField(row.name_de) : null;
-                    const germanChanged = hasGermanChangedColumn ? 
-                        (cleanField(row.german_changed) === 'TRUE' || cleanField(row.german_changed) === 'true') : 
+                    const germanChanged = hasGermanChangedColumn ?
+                        (cleanField(row.german_changed) === 'TRUE' || cleanField(row.german_changed) === 'true') :
                         false;
                     const mergeTarget = hasMergeColumn ? cleanField(row.merge) : null;
 
@@ -1549,12 +1814,12 @@
 
                 nodesData = hierarchy;
                 buildFlatNodeMap(nodesData);
-                
+
                 // Initialize session for auto-save
                 initializeSession(nodesData);
-                
+
                 updateProgress(100, 'Complete!');
-                
+
                 setTimeout(() => {
                     showProgress(false);
                     hideImportSection();
@@ -1576,11 +1841,11 @@
             const result = [];
             let current = '';
             let inQuotes = false;
-            
+
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 const nextChar = line[i + 1];
-                
+
                 if (char === '"') {
                     if (inQuotes && nextChar === '"') {
                         current += '"';
@@ -1595,7 +1860,7 @@
                     current += char;
                 }
             }
-            
+
             result.push(current);
             return result;
         }
@@ -1640,7 +1905,7 @@
 
         // Drag and drop
         const importSection = document.getElementById('importSection');
-        
+
         importSection.addEventListener('dragover', (e) => {
             e.preventDefault();
             importSection.classList.add('dragover');
@@ -1654,7 +1919,7 @@
         importSection.addEventListener('drop', (e) => {
             e.preventDefault();
             importSection.classList.remove('dragover');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 processFile(files[0]);
@@ -1700,11 +1965,11 @@
                 alert('No data loaded. Please import a CSV file first.');
                 return;
             }
-            
+
             editMode = !editMode;
             const button = event.target;
             const treeContainer = document.getElementById('tree');
-            
+
             if (editMode) {
                 button.textContent = '✅ Save Mode';
                 button.classList.add('primary');
@@ -1720,13 +1985,13 @@
 
         function makeNodeEditable(nodeElement, node) {
             if (!editMode) return;
-            
+
             const label = nodeElement.querySelector('.node-label');
             if (label.querySelector('input')) return; // Already editing
-            
+
             const currentText = node.name;
             const currentGerman = node.german || '';
-            
+
             // Create editing interface with side-by-side inputs
             label.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 6px; width: 100%;">
@@ -1741,7 +2006,7 @@
                            style="font-size: 12px; color: #666; font-style: italic; flex: 1; min-width: 120px; border: 1px solid #ccc; padding: 2px 4px; border-radius: 2px;">
                 </div>
             `;
-            
+
             const firstInput = label.querySelector('input');
             firstInput.focus();
             firstInput.select();
@@ -1749,19 +2014,19 @@
 
         function saveNodeEdit(input, nodeId, fieldType) {
             const newValue = input.value.trim();
-            
+
             // Get the current node data
             const node = flatNodesMap.get(nodeId);
             if (!node) return;
-            
+
             if (fieldType === 'name') {
                 if (newValue === '') {
                     input.focus();
                     return;
                 }
-                
+
                 const oldName = node.name;
-                
+
                 // Only mark as renamed if the name actually changed
                 if (oldName !== newValue) {
                     markNodeAsRenamed(nodeId, newValue, oldName);
@@ -1777,7 +2042,7 @@
                     updatePerformanceInfo(`Updated German translation for node: ${nodeId} (Auto-saved)`);
                 }
             }
-            
+
             // Don't restore display immediately - let user continue editing
             // Only restore when they click outside the entire editing area
             // Use a timeout to check if focus moved to another input in the same node
@@ -1785,7 +2050,7 @@
                 const label = input.closest('.node-label');
                 const activeElement = document.activeElement;
                 const isStillEditingThisNode = label && label.contains(activeElement) && activeElement.tagName === 'INPUT';
-                
+
                 if (!isStillEditingThisNode) {
                     // Check if English field is empty (required field)
                     const englishInput = label.querySelector('input[placeholder*="English"]');
@@ -1793,36 +2058,36 @@
                         englishInput.focus();
                         return;
                     }
-                    
+
                     // Restore the display
                     restoreNodeDisplay(nodeId);
                 }
             }, 50);
         }
-        
+
         function restoreNodeDisplay(nodeId) {
             const node = flatNodesMap.get(nodeId);
             if (!node) return;
-            
+
             const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
             const label = nodeElement.querySelector('.node-label');
-            
+
             // Clear the editing interface
             label.innerHTML = '';
-            
+
             // Create main name element
             const mainName = document.createElement('span');
             mainName.className = 'node-label-main';
             mainName.textContent = node.name;
             label.appendChild(mainName);
-            
+
             // Add German translation if available
             if (node.german && node.german.trim()) {
                 const separator = document.createElement('span');
                 separator.className = 'node-label-separator';
                 separator.textContent = '|';
                 label.appendChild(separator);
-                
+
                 const germanName = document.createElement('span');
                 germanName.className = 'node-label-german';
                 germanName.textContent = node.german;
@@ -1855,11 +2120,11 @@
                 alert('No data to export. Please import a CSV file first.');
                 return;
             }
-            
+
             const csvContent = generateCSVFromNodes();
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = `${originalFileName}_edited.csv`;
@@ -1867,13 +2132,13 @@
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-            
+
             updatePerformanceInfo(`Exported ${totalNodes} nodes to CSV`);
         }
 
         function generateCSVFromNodes() {
             const rows = ['name,id,pid,level,renamed,name_de,german_changed,merge'];
-            
+
             function addNodeToCSV(node) {
                 const name = `"${node.name.replace(/"/g, '""')}"`;
                 const id = `"${node.id}"`;
@@ -1883,14 +2148,14 @@
                 const german = node.german ? `"${node.german.replace(/"/g, '""')}"` : '';
                 const germanChanged = node.german_changed ? 'TRUE' : 'FALSE';
                 const merge = node.mergeTarget ? `"${node.mergeTarget}"` : '';
-                
+
                 rows.push(`${name},${id},${pid},${level},${renamed},${german},${germanChanged},${merge}`);
-                
+
                 if (node.children && node.children.length > 0) {
                     node.children.forEach(child => addNodeToCSV(child));
                 }
             }
-            
+
             nodesData.forEach(rootNode => addNodeToCSV(rootNode));
             return rows.join('\n');
         }
@@ -1901,10 +2166,10 @@
                 alert('No data loaded. Please import a CSV file first.');
                 return;
             }
-            
+
             duplicateDetectionActive = !duplicateDetectionActive;
             const button = event.target;
-            
+
             if (duplicateDetectionActive) {
                 button.textContent = '✅ Hide Duplicates';
                 button.classList.add('primary');
@@ -1922,26 +2187,26 @@
 
         function findAndHighlightDuplicates() {
             duplicateGroups.clear();
-            
+
             // Group nodes by parent and name
             const parentGroups = new Map();
-            
+
             flatNodesMap.forEach((node, nodeId) => {
                 const parentId = node.pid || 'ROOT';
                 const nodeName = node.name.toLowerCase().trim();
-                
+
                 if (!parentGroups.has(parentId)) {
                     parentGroups.set(parentId, new Map());
                 }
-                
+
                 const parentGroup = parentGroups.get(parentId);
                 if (!parentGroup.has(nodeName)) {
                     parentGroup.set(nodeName, []);
                 }
-                
+
                 parentGroup.get(nodeName).push(node);
             });
-            
+
             // Find duplicates within each parent group
             parentGroups.forEach((nameGroups, parentId) => {
                 nameGroups.forEach((nodes, nodeName) => {
@@ -1956,7 +2221,7 @@
                     }
                 });
             });
-            
+
             // Highlight duplicate nodes
             duplicateGroups.forEach(group => {
                 group.nodes.forEach(node => {
@@ -1966,7 +2231,7 @@
                     }
                 });
             });
-            
+
             updateDuplicatePanel();
         }
 
@@ -1987,49 +2252,49 @@
 
         function updateDuplicatePanel() {
             const content = document.getElementById('duplicateContent');
-            
+
             if (duplicateGroups.size === 0) {
                 content.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No duplicates found within the same categories.</div>';
                 return;
             }
-            
+
             let html = '<div style="margin-bottom: 15px; padding: 10px; background: #e8f4fd; border-radius: 5px; font-size: 14px;"><strong>Duplicate Merge Tool:</strong> Only leaf nodes (nodes without children) can be merged. Click "Merge" to select which node should be the merge destination.</div>';
-            
+
             duplicateGroups.forEach((group, groupKey) => {
                 const mergeStatus = getMergeStatusForGroup(group, groupKey);
                 const hasActiveMerge = mergeStatus.hasPendingMerge;
                 const hasLeafNodes = group.nodes.some(node => isLeafNode(node));
                 const leafNodeCount = group.nodes.filter(node => isLeafNode(node)).length;
-                
+
                 html += `
                     <div class="duplicate-group" data-group-key="${groupKey}">
                         <div class="duplicate-group-header">
                             <div>"${group.nodeName}" in ${group.parentName} (${leafNodeCount} mergeable of ${group.nodes.length} total)</div>
                             <div class="merge-controls">
                                 ${hasLeafNodes && leafNodeCount >= 2 ? (
-                                    !hasActiveMerge ? 
-                                        `<button class="merge-btn" onclick="startMerge('${groupKey}')">Merge</button>` :
-                                        `<div class="merge-active">
+                        !hasActiveMerge ?
+                            `<button class="merge-btn" onclick="startMerge('${groupKey}')">Merge</button>` :
+                            `<div class="merge-active">
                                             <button class="merge-btn cancel" onclick="cancelMerge('${groupKey}')">❌ Cancel</button>
                                             <button class="merge-btn confirm" onclick="confirmMerge('${groupKey}')" ${!mergeStatus.hasSelection ? 'disabled' : ''}>✅ Confirm</button>
                                         </div>`
-                                ) : ''}
+                    ) : ''}
                             </div>
                         </div>
                         <div class="duplicate-items ${hasActiveMerge ? 'merge-mode' : ''}">
                 `;
-                
+
                 group.nodes.forEach((node, index) => {
                     const path = getNodePath(node);
                     const isSelected = mergeStatus.selectedDestination === node.id;
                     const willBeMerged = mergeStatus.sourceNodes.includes(node.id);
                     const hasChildren = !isLeafNode(node);
-                    
+
                     // Only show this node if it's a leaf node OR if there's no active merge
                     if (hasActiveMerge && hasChildren) {
                         return; // Skip non-leaf nodes when merge is active
                     }
-                    
+
                     html += `
                         <div class="duplicate-item ${isSelected ? 'merge-destination' : ''} ${willBeMerged ? 'merge-source' : ''}" onclick="scrollToNode('${node.id}')">
                             ${hasActiveMerge && !hasChildren ? `
@@ -2050,17 +2315,17 @@
                         </div>
                     `;
                 });
-                
+
                 html += '</div></div>';
             });
-            
+
             content.innerHTML = html;
         }
 
         function getNodePath(node) {
             const path = [];
             let current = node;
-            
+
             while (current && current.pid) {
                 const parent = flatNodesMap.get(current.pid);
                 if (parent) {
@@ -2070,8 +2335,575 @@
                     break;
                 }
             }
-            
+
             return path.length > 0 ? path.join(' > ') : 'Root Level';
+        }
+
+        // Label Normalization Functionality
+        let normalizationCorrections = [];
+        let selectedCorrections = new Set();
+
+        // Configuration for normalization service
+        const NORMALIZATION_SERVICE_URL = 'http://localhost:5000';
+
+        // Debug test function
+        async function testNormalization() {
+            const input = document.getElementById('testInput').value;
+            const results = document.getElementById('testResults');
+            
+            if (!input.trim()) {
+                results.textContent = 'Please enter some text to test';
+                return;
+            }
+
+            results.textContent = 'Testing...\n';
+            
+            try {
+                // Test single text normalization
+                console.log('🧪 Testing normalization for:', input);
+                const response = await fetch(`${NORMALIZATION_SERVICE_URL}/normalize-text`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: input })
+                });
+
+                console.log('🧪 Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`Service responded with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('🧪 Service response:', data);
+
+                results.textContent = `🔍 INPUT: "${input}"
+📊 OUTPUT: "${data.normalized_text}"
+🔒 PRESERVED: ${JSON.stringify(data.preserved_terms)}
+📡 STATUS: Service call successful
+⏰ TIMESTAMP: ${new Date().toLocaleTimeString()}`;
+
+            } catch (error) {
+                console.error('🧪 Test error:', error);
+                results.textContent = `❌ ERROR: ${error.message}
+📡 Testing fallback normalization...
+
+Fallback result: "${toProperCaseBasic(input)}"
+⏰ TIMESTAMP: ${new Date().toLocaleTimeString()}`;
+            }
+        }
+
+        // Global test function for browser console
+        window.testCDP = async function() {
+            console.log('🧪 Testing CDP normalization...');
+            try {
+                const response = await fetch('http://localhost:5000/normalize-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: 'Controller deceleration parking (CDP)' })
+                });
+
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ SUCCESS!');
+                console.log('Input:', 'Controller deceleration parking (CDP)');
+                console.log('Output:', data.normalized_text);
+                console.log('Preserved:', data.preserved_terms);
+                
+                // Also display in the test results area
+                const results = document.getElementById('testResults');
+                if (results) {
+                    results.textContent = `✅ CONSOLE TEST SUCCESS
+INPUT: "Controller deceleration parking (CDP)"
+OUTPUT: "${data.normalized_text}"
+PRESERVED: ${JSON.stringify(data.preserved_terms)}
+STATUS: Service working correctly
+TIME: ${new Date().toLocaleTimeString()}`;
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('❌ ERROR:', error);
+                
+                const results = document.getElementById('testResults');
+                if (results) {
+                    results.textContent = `❌ CONSOLE TEST FAILED
+ERROR: ${error.message}
+TIME: ${new Date().toLocaleTimeString()}`;
+                }
+                
+                throw error;
+            }
+        };
+
+        // Quick test function for specific cases
+        window.quickTest = async function(testText) {
+            document.getElementById('testInput').value = testText;
+            testNormalization();
+        };
+
+        async function normalizeWithService(labels) {
+            console.log('🔍 Starting normalization with service for labels:', labels);
+            try {
+                console.log('📡 Fetching from:', `${NORMALIZATION_SERVICE_URL}/normalize`);
+                const response = await fetch(`${NORMALIZATION_SERVICE_URL}/normalize`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ labels: labels })
+                });
+
+                console.log('📡 Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`Service responded with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('📊 Service response data:', data);
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Normalization service error');
+                }
+
+                console.log('✅ Normalization successful, returning results');
+                return data.results;
+            } catch (error) {
+                console.error('❌ Normalization service error:', error);
+                console.warn('🔄 Normalization service unavailable, falling back to basic normalization');
+                // Fallback to basic normalization
+                return labels.map(label => ({
+                    original: label,
+                    normalized: toProperCaseBasic(label),
+                    changed: label !== toProperCaseBasic(label),
+                    preserved_terms: [],
+                    normalized_words: []
+                }));
+            }
+        }
+
+        function toProperCaseBasic(str) {
+            if (!str) return str;
+
+            // Known technical terms that should be uppercase
+            const technicalTerms = ['ECU', 'DC', 'AC', 'EV', 'ABS', 'LED', 'GPS', 'USB', 'CPU', 'GPU', 'RAM', 'ROM'];
+            
+            // Basic fallback normalization (used when service is unavailable)
+            const preservePatterns = [
+                /\be-mail\b/gi,
+                /\bi-\w+\b/gi,
+                /\be-\w+\b/gi  // e-prefixed words like e-Axle
+            ];
+
+            // Check if the string contains preserve patterns - if so, handle carefully
+            let hasPreservePattern = false;
+            for (const pattern of preservePatterns) {
+                if (pattern.test(str)) {
+                    hasPreservePattern = true;
+                    break;
+                }
+            }
+
+            if (hasPreservePattern) {
+                // For strings with preserve patterns, be more careful
+                return str.replace(/\b\w+/g, (word) => {
+                    // Check if this specific word should be preserved as lowercase
+                    if (/^e-\w+$/i.test(word) || /^i-\w+$/i.test(word)) {
+                        return word.toLowerCase();
+                    }
+                    // Check if it's a technical term
+                    if (technicalTerms.includes(word.toUpperCase())) {
+                        return word.toUpperCase();
+                    }
+                    // Preserve all-caps words that are likely acronyms
+                    if (word.length <= 6 && word === word.toUpperCase() && /^[A-Z]+$/.test(word)) {
+                        return word;
+                    }
+                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                });
+            }
+
+            // Regular proper case conversion
+            return str.replace(/\b\w+/g, (word) => {
+                // Check if it's a technical term first
+                if (technicalTerms.includes(word.toUpperCase())) {
+                    return word.toUpperCase();
+                }
+                // Preserve all-caps words that are likely acronyms  
+                if (word.length <= 6 && word === word.toUpperCase() && /^[A-Z]+$/.test(word)) {
+                    return word;
+                }
+                // Handle hyphenated technical terms like DC-AC
+                if (word.includes('-')) {
+                    return word.split('-').map(part => {
+                        // Check if it's a technical term
+                        if (technicalTerms.includes(part.toUpperCase())) {
+                            return part.toUpperCase();
+                        }
+                        // Preserve already uppercase acronym parts
+                        if (part.length <= 6 && part === part.toUpperCase() && /^[A-Z]+$/.test(part)) {
+                            return part;
+                        }
+                        return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+                    }).join('-');
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            });
+        }
+
+        function toProperCase(text) {
+            return toProperCaseBasic(text);
+        }
+
+        async function generateNormalizationCorrections() {
+            console.log('🔄 Starting generateNormalizationCorrections');
+            normalizationCorrections = [];
+            selectedCorrections.clear();
+
+            // Collect all node names
+            const nodeLabels = [];
+            const nodeMap = new Map();
+
+            function collectNodes(node) {
+                nodeLabels.push(node.name);
+                nodeMap.set(node.name, node);
+
+                if (node.children) {
+                    node.children.forEach(child => collectNodes(child));
+                }
+            }
+
+            console.log('📊 Checking nodesData:', nodesData);
+            nodesData.forEach(rootNode => collectNodes(rootNode));
+            console.log('📝 Collected node labels:', nodeLabels);
+
+            try {
+                // Use intelligent normalization service
+                console.log('🚀 Calling normalizeWithService...');
+                const results = await normalizeWithService(nodeLabels);
+                console.log('📊 Service results:', results);
+
+                results.forEach((result, index) => {
+                    if (result.changed) {
+                        const node = nodeMap.get(result.original);
+                        if (node) {
+                            const correctionId = `correction_${node.id}`;
+
+                            normalizationCorrections.push({
+                                id: correctionId,
+                                nodeId: node.id,
+                                original: result.original,
+                                normalized: result.normalized,
+                                node: node,
+                                preservedTerms: result.preserved_terms || [],
+                                normalizedWords: result.normalized_words || []
+                            });
+
+                            // Select all by default
+                            selectedCorrections.add(correctionId);
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error generating normalization corrections:', error);
+                // Fallback to basic normalization
+                function checkNodeBasic(node) {
+                    const originalName = node.name;
+                    const normalizedName = toProperCaseBasic(originalName);
+
+                    if (originalName !== normalizedName) {
+                        const correctionId = `correction_${node.id}`;
+                        normalizationCorrections.push({
+                            id: correctionId,
+                            nodeId: node.id,
+                            original: originalName,
+                            normalized: normalizedName,
+                            node: node,
+                            preservedTerms: [],
+                            normalizedWords: []
+                        });
+                        // Select all by default
+                        selectedCorrections.add(correctionId);
+                    }
+
+                    if (node.children) {
+                        node.children.forEach(child => checkNodeBasic(child));
+                    }
+                }
+
+                nodesData.forEach(rootNode => checkNodeBasic(rootNode));
+            }
+
+            return normalizationCorrections;
+        }
+
+        async function showNormalizationPreview() {
+            // Show loading state
+            const panel = document.getElementById('normalizationPanel');
+            panel.style.display = 'block';
+
+            // Update just the content area, not the entire panel
+            const content = document.getElementById('normalizationContent');
+            content.innerHTML = `
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>🔍 Analyzing labels for technical terms and acronyms...</p>
+                </div>
+            `;
+
+            try {
+                const corrections = await generateNormalizationCorrections();
+
+                if (corrections.length === 0) {
+                    closeNormalizationPanel();
+                    showConfirmationModal(
+                        'No Changes Needed',
+                        'All node labels are already properly formatted, and all technical terms/acronyms have been preserved.',
+                        function () { }
+                    );
+                    return;
+                }
+
+                updateNormalizationPanel(corrections);
+            } catch (error) {
+                console.error('Error in normalization preview:', error);
+                closeNormalizationPanel();
+                showConfirmationModal(
+                    'Normalization Error',
+                    'There was an error analyzing the labels. Please try again.',
+                    function () { }
+                );
+            }
+        }
+
+        function updateNormalizationPanel(corrections) {
+            const content = document.getElementById('normalizationContent');
+
+            // Count preserved terms across all corrections
+            const allPreservedTerms = new Set();
+            corrections.forEach(correction => {
+                if (correction.preservedTerms) {
+                    correction.preservedTerms.forEach(term => allPreservedTerms.add(term));
+                }
+            });
+
+            const preservedCount = allPreservedTerms.size;
+            const preservedTermsList = Array.from(allPreservedTerms).slice(0, 5); // Show first 5
+
+            let html = `
+                <div class="normalization-summary">
+                    <strong>🤖 Intelligent Normalization Preview</strong><br>
+                    Found ${corrections.length} labels that can be normalized to Proper Case.<br>
+                    ${preservedCount > 0 ?
+                    `<small>✅ ${preservedCount} technical terms/acronyms preserved: ${preservedTermsList.join(', ')}${preservedCount > 5 ? '...' : ''}</small>` :
+                    '<small>🔍 Smart detection active - technical terms and acronyms will be preserved.</small>'
+                }
+                </div>
+                
+                <div class="normalization-controls">
+                    <div class="select-all-container">
+                        <input type="checkbox" id="selectAllNormalization" onchange="toggleSelectAll()" checked>
+                        <label for="selectAllNormalization">Select All</label>
+                    </div>
+                    <div class="selection-summary" id="selectionSummary">
+                        ${selectedCorrections.size} of ${corrections.length} changes selected
+                    </div>
+                </div>
+            `;
+
+            corrections.forEach(correction => {
+                const isSelected = selectedCorrections.has(correction.id);
+                const hasPreservedTerms = correction.preservedTerms && correction.preservedTerms.length > 0;
+
+                html += `
+                    <div class="normalization-item ${isSelected ? 'selected' : 'unselected'}" id="item_${correction.id}">
+                        <input type="checkbox" class="normalization-checkbox" 
+                               id="${correction.id}" 
+                               onchange="toggleCorrection('${correction.id}')"
+                               ${isSelected ? 'checked' : ''}>
+                        <div class="normalization-before">${correction.original}</div>
+                        <div class="normalization-arrow">→</div>
+                        <div class="normalization-after">${correction.normalized}</div>
+                        ${hasPreservedTerms ?
+                        `<div class="preserved-terms">🛡️ ${correction.preservedTerms.join(', ')}</div>` :
+                        ''
+                    }
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+            updateConfirmButtonState();
+        }
+
+        function closeNormalizationPanel() {
+            document.getElementById('normalizationPanel').style.display = 'none';
+            normalizationCorrections = [];
+            selectedCorrections.clear();
+        }
+
+        function toggleCorrection(correctionId) {
+            if (selectedCorrections.has(correctionId)) {
+                selectedCorrections.delete(correctionId);
+            } else {
+                selectedCorrections.add(correctionId);
+            }
+
+            // Update visual state
+            const itemElement = document.getElementById(`item_${correctionId}`);
+            const checkbox = document.getElementById(correctionId);
+
+            if (selectedCorrections.has(correctionId)) {
+                itemElement.classList.add('selected');
+                itemElement.classList.remove('unselected');
+            } else {
+                itemElement.classList.remove('selected');
+                itemElement.classList.add('unselected');
+            }
+
+            updateSelectionSummary();
+            updateSelectAllCheckbox();
+            updateConfirmButtonState();
+        }
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAllNormalization');
+            const isSelectingAll = selectAllCheckbox.checked;
+
+            if (isSelectingAll) {
+                // Select all corrections
+                normalizationCorrections.forEach(correction => {
+                    selectedCorrections.add(correction.id);
+                });
+            } else {
+                // Deselect all corrections
+                selectedCorrections.clear();
+            }
+
+            // Update all checkboxes and visual states
+            normalizationCorrections.forEach(correction => {
+                const checkbox = document.getElementById(correction.id);
+                const itemElement = document.getElementById(`item_${correction.id}`);
+
+                if (checkbox) {
+                    checkbox.checked = isSelectingAll;
+
+                    if (isSelectingAll) {
+                        itemElement.classList.add('selected');
+                        itemElement.classList.remove('unselected');
+                    } else {
+                        itemElement.classList.remove('selected');
+                        itemElement.classList.add('unselected');
+                    }
+                }
+            });
+
+            updateSelectionSummary();
+            updateConfirmButtonState();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('selectAllNormalization');
+            if (selectAllCheckbox) {
+                const totalCorrections = normalizationCorrections.length;
+                const selectedCount = selectedCorrections.size;
+
+                if (selectedCount === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                } else if (selectedCount === totalCorrections) {
+                    selectAllCheckbox.checked = true;
+                    selectAllCheckbox.indeterminate = false;
+                } else {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = true;
+                }
+            }
+        }
+
+        function updateSelectionSummary() {
+            const summaryElement = document.getElementById('selectionSummary');
+            if (summaryElement) {
+                summaryElement.textContent = `${selectedCorrections.size} of ${normalizationCorrections.length} changes selected`;
+            }
+        }
+
+        function updateConfirmButtonState() {
+            const confirmButton = document.querySelector('.normalization-panel-footer .btn.primary');
+            if (confirmButton) {
+                confirmButton.disabled = selectedCorrections.size === 0;
+                confirmButton.textContent = selectedCorrections.size === 0 ?
+                    '✅ No Changes Selected' :
+                    `✅ Confirm ${selectedCorrections.size} Changes`;
+            }
+        }
+
+        function applyNormalization() {
+            if (selectedCorrections.size === 0) {
+                showConfirmationModal(
+                    'No Changes Selected',
+                    'Please select at least one correction to apply.',
+                    function () { }
+                );
+                return;
+            }
+
+            let appliedCount = 0;
+
+            // Only apply selected corrections
+            normalizationCorrections.forEach(correction => {
+                if (selectedCorrections.has(correction.id)) {
+                    const node = correction.node;
+                    node.name = correction.normalized;
+                    node.renamed = true; // Mark as edited
+                    appliedCount++;
+
+                    // Update the visual element if it exists
+                    const nodeElement = document.querySelector(`[data-id="${node.id}"] .node-label-main`);
+                    if (nodeElement) {
+                        nodeElement.textContent = correction.normalized;
+                    }
+
+                    // Add renamed class to parent node element
+                    const parentNodeElement = document.querySelector(`[data-id="${node.id}"]`);
+                    if (parentNodeElement) {
+                        parentNodeElement.classList.add('node-renamed');
+                    }
+                }
+            });
+
+            // Trigger auto-save
+            scheduleAutoSave();
+
+            // Update performance info
+            updatePerformanceInfo(`Normalized ${appliedCount} node labels to Proper Case`);
+
+            // Close panel and show success
+            closeNormalizationPanel();
+
+            const skippedCount = normalizationCorrections.length - appliedCount;
+            const message = skippedCount > 0 ?
+                `Successfully normalized ${appliedCount} node labels to Proper Case.\n${skippedCount} corrections were skipped.\n\nNormalized nodes are marked with edit indicators and changes will be included in your CSV export.` :
+                `Successfully normalized ${appliedCount} node labels to Proper Case.\n\nNormalized nodes are marked with edit indicators and changes will be included in your CSV export.`;
+
+            showConfirmationModal(
+                'Normalization Complete',
+                message,
+                function () {
+                    // Re-render tree to show updated labels and indicators
+                    renderTree();
+                }
+            );
         }
 
         // Merge functionality - Simplified Implementation
@@ -2079,25 +2911,25 @@
 
         function startMerge(groupKey) {
             console.log('startMerge called with groupKey:', groupKey);
-            
+
             const group = duplicateGroups.get(groupKey);
             console.log('found group:', group);
-            
+
             if (!group) {
                 console.log('Group not found:', groupKey);
                 alert('Group not found: ' + groupKey);
                 return;
             }
-            
+
             // Check if there are at least 2 leaf nodes to merge
             const leafNodes = group.nodes.filter(node => isLeafNode(node));
             console.log('leafNodes count:', leafNodes.length);
-            
+
             if (leafNodes.length < 2) {
                 alert('Cannot merge this group: Need at least 2 leaf nodes (nodes without children) to merge.');
                 return;
             }
-            
+
             // Initialize merge for this group
             console.log('Setting up merge for groupKey:', groupKey);
             activeMerges.set(groupKey, {
@@ -2105,7 +2937,7 @@
                 sourceNodes: [],
                 hasSelection: false
             });
-            
+
             console.log('activeMerges after setup:', activeMerges);
             updateDuplicatePanel();
             updatePerformanceInfo(`Started merge setup for "${group.nodeName}" (${leafNodes.length} leaf nodes available)`);
@@ -2122,7 +2954,7 @@
 
         function getMergeStatusForGroup(group, groupKey) {
             const activeMerge = activeMerges.get(groupKey);
-            
+
             if (!activeMerge) {
                 return {
                     hasPendingMerge: false,
@@ -2131,7 +2963,7 @@
                     sourceNodes: []
                 };
             }
-            
+
             return {
                 hasPendingMerge: true,
                 hasSelection: activeMerge.hasSelection,
@@ -2149,30 +2981,30 @@
         function selectMergeDestination(groupKey, destinationNodeId) {
             const merge = activeMerges.get(groupKey);
             const group = duplicateGroups.get(groupKey);
-            
+
             if (!merge || !group) {
                 console.log('Error: merge or group not found', { groupKey, merge, group });
                 alert('Error: Could not find merge data. Please try again.');
                 return;
             }
-            
+
             // Find the destination node and verify it's a leaf node
             const destinationNode = group.nodes.find(node => node.id === destinationNodeId);
             if (!destinationNode || !isLeafNode(destinationNode)) {
                 alert('Selected node is not a leaf node and cannot be used as merge destination.');
                 return;
             }
-            
+
             // Set the destination and calculate source nodes
             merge.selectedDestination = destinationNodeId;
             merge.sourceNodes = group.nodes
                 .filter(node => node.id !== destinationNodeId && isLeafNode(node))
                 .map(node => node.id);
             merge.hasSelection = true;
-            
+
             // Update the merge in the map
             activeMerges.set(groupKey, merge);
-            
+
             // Refresh the UI
             updateDuplicatePanel();
             updatePerformanceInfo(`Selected node ${destinationNodeId} as merge destination`);
@@ -2181,12 +3013,12 @@
         function confirmMerge(groupKey) {
             const merge = activeMerges.get(groupKey);
             const group = duplicateGroups.get(groupKey);
-            
+
             if (!merge || !group || !merge.selectedDestination) {
                 alert('Please select a destination node first.');
                 return;
             }
-            
+
             // Apply merge to the data
             merge.sourceNodes.forEach(sourceNodeId => {
                 const sourceNode = flatNodesMap.get(sourceNodeId);
@@ -2194,23 +3026,23 @@
                     sourceNode.mergeTarget = merge.selectedDestination;
                 }
             });
-            
+
             // Clean up
             activeMerges.delete(groupKey);
-            
+
             // Trigger auto-save
             scheduleAutoSave();
-            
+
             // Update UI
             updateDuplicatePanel();
             updateMergeIndicators(merge.sourceNodes, merge.selectedDestination);
             updatePerformanceInfo(`Merged ${merge.sourceNodes.length} nodes to ${merge.selectedDestination}`);
-            
+
             // Show success message
             showConfirmationModal(
                 'Merge Completed',
                 `Successfully set up merge for ${merge.sourceNodes.length} duplicate nodes.\n\nThe merge information will be included in your CSV export in the "merge" column.`,
-                function() {} // Just close the modal
+                function () { } // Just close the modal
             );
         }
 
@@ -2247,7 +3079,7 @@
         function scrollToNode(nodeId) {
             // First expand the path to the node
             expandPathToNode(nodeId);
-            
+
             // Wait a bit for the expansion to complete, then scroll
             setTimeout(() => {
                 const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
@@ -2258,19 +3090,19 @@
                     nodeContent.style.backgroundColor = '#007bff';
                     nodeContent.style.color = 'white';
                     nodeContent.style.transform = 'scale(1.02)';
-                    
+
                     // Scroll to the node
-                    nodeElement.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
+                    nodeElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
                     });
-                    
+
                     // Remove highlight after a delay
                     setTimeout(() => {
                         nodeContent.style.backgroundColor = '';
                         nodeContent.style.color = '';
                         nodeContent.style.transform = '';
-                        
+
                         // Restore duplicate highlighting if it was there
                         if (duplicateDetectionActive) {
                             setTimeout(() => {
@@ -2278,13 +3110,13 @@
                             }, 300);
                         }
                     }, 1500);
-                    
+
                     updatePerformanceInfo(`Navigated to node: ${nodeId}`);
                 }
             }, 200);
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('helpModal');
             if (event.target === modal) {
                 modal.style.display = 'none';
@@ -2312,7 +3144,7 @@
                     node.children.forEach(child => processNode(child));
                 }
             }
-            
+
             totalNodes = 0;
             flatNodesMap.clear();
             nodes.forEach(rootNode => processNode(rootNode));
@@ -2351,7 +3183,7 @@
 
         function calculateStats(data) {
             const levels = {};
-            
+
             flatNodesMap.forEach(node => {
                 levels[node.level] = (levels[node.level] || 0) + 1;
             });
@@ -2368,21 +3200,21 @@
             const treeElement = document.getElementById('tree');
             treeElement.innerHTML = '';
             renderedNodes.clear();
-            
+
             nodesData.forEach(rootNode => {
                 treeElement.appendChild(createNodeElement(rootNode, false));
             });
-            
+
             // Update merge indicators for all merged nodes
             updateAllMergeIndicators();
-            
+
             // Re-apply duplicate detection if it was active
             if (duplicateDetectionActive) {
                 setTimeout(() => {
                     findAndHighlightDuplicates();
                 }, 100);
             }
-            
+
             updatePerformanceInfo(`Rendered ${nodesData.length} root nodes`);
         }
 
@@ -2390,65 +3222,65 @@
             const nodeDiv = document.createElement('div');
             nodeDiv.className = `node level-${node.level}`;
             nodeDiv.setAttribute('data-id', node.id);
-            
+
             const hasChildren = node.children && node.children.length > 0;
-            
+
             const nodeContent = document.createElement('div');
             nodeContent.className = 'node-content';
             nodeContent.onclick = () => toggleNode(node.id);
-            
+
             const toggleBtn = document.createElement('button');
             toggleBtn.className = `toggle-btn ${hasChildren ? '' : 'no-children'}`;
             toggleBtn.innerHTML = hasChildren ? (isExpanded ? '−' : '+') : '●';
-            
+
             const label = document.createElement('span');
             label.className = 'node-label editable';
-            
+
             // Create main name element
             const mainName = document.createElement('span');
             mainName.className = 'node-label-main';
             mainName.textContent = node.name;
             label.appendChild(mainName);
-            
+
             // Add German translation if available
             if (node.german && node.german.trim()) {
                 const separator = document.createElement('span');
                 separator.className = 'node-label-separator';
                 separator.textContent = '|';
                 label.appendChild(separator);
-                
+
                 const germanName = document.createElement('span');
                 germanName.className = 'node-label-german';
                 germanName.textContent = node.german;
                 label.appendChild(germanName);
             }
-            
+
             label.onclick = (e) => {
                 e.stopPropagation();
                 makeNodeEditable(nodeDiv, node);
             };
-            
+
             const editIndicator = document.createElement('span');
             editIndicator.className = 'edit-indicator';
             editIndicator.textContent = '✏️';
-            
+
             const mergeIndicator = document.createElement('span');
             mergeIndicator.className = 'merge-indicator';
             mergeIndicator.textContent = '⚡';
             mergeIndicator.title = 'This node has been merged';
-            
+
             const info = document.createElement('span');
             info.className = 'node-info';
             info.textContent = `${node.level} | ID: ${node.id}`;
             if (hasChildren) {
                 info.textContent += ` | ${node.children.length} children`;
             }
-            
+
             nodeContent.appendChild(toggleBtn);
             nodeContent.appendChild(label);
             nodeContent.appendChild(editIndicator);
             nodeContent.appendChild(mergeIndicator);
-            
+
             // Add renamed indicator if node was renamed
             if (node.renamed) {
                 const renamedIndicator = document.createElement('span');
@@ -2458,7 +3290,7 @@
                 nodeContent.appendChild(renamedIndicator);
                 nodeDiv.classList.add('node-renamed');
             }
-            
+
             // Add German changed indicator if German translation was modified
             if (node.german_changed) {
                 const germanChangedIndicator = document.createElement('span');
@@ -2467,31 +3299,31 @@
                 germanChangedIndicator.title = 'German translation has been modified';
                 nodeContent.appendChild(germanChangedIndicator);
             }
-            
+
             // Add merge indicator if node has been merged
             if (node.mergeTarget) {
                 nodeDiv.classList.add('node-merged');
                 mergeIndicator.title = `This node will be merged to: ${node.mergeTarget}`;
             }
-            
+
             nodeContent.appendChild(info);
             nodeDiv.appendChild(nodeContent);
-            
+
             if (hasChildren && isExpanded) {
                 const childrenDiv = document.createElement('div');
                 childrenDiv.className = 'children expanded';
-                
+
                 node.children.forEach(child => {
                     childrenDiv.appendChild(createNodeElement(child, false));
                 });
-                
+
                 nodeDiv.appendChild(childrenDiv);
             } else if (hasChildren) {
                 const childrenDiv = document.createElement('div');
                 childrenDiv.className = 'children collapsed';
                 nodeDiv.appendChild(childrenDiv);
             }
-            
+
             renderedNodes.add(node.id);
             return nodeDiv;
         }
@@ -2499,14 +3331,14 @@
         function toggleNode(nodeId) {
             const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
             if (!nodeElement) return;
-            
+
             const node = flatNodesMap.get(nodeId);
             if (!node || !node.children || node.children.length === 0) return;
-            
+
             const childrenDiv = nodeElement.querySelector('.children');
             const toggleBtn = nodeElement.querySelector('.toggle-btn');
             const isExpanded = childrenDiv.classList.contains('expanded');
-            
+
             if (isExpanded) {
                 childrenDiv.classList.remove('expanded');
                 childrenDiv.classList.add('collapsed');
@@ -2517,7 +3349,7 @@
                         childrenDiv.appendChild(createNodeElement(child, false));
                     });
                 }
-                
+
                 childrenDiv.classList.remove('collapsed');
                 childrenDiv.classList.add('expanded');
                 toggleBtn.innerHTML = '−';
@@ -2526,7 +3358,7 @@
 
         function expandLevel(maxLevel) {
             collapseAll();
-            
+
             document.querySelectorAll('.node').forEach(nodeElement => {
                 const nodeId = nodeElement.getAttribute('data-id');
                 const node = flatNodesMap.get(nodeId);
@@ -2537,7 +3369,7 @@
                     }
                 }
             });
-            
+
             updatePerformanceInfo(`Expanded to level ${maxLevel}`);
         }
 
@@ -2546,39 +3378,39 @@
                 const nodeElement = childrenDiv.closest('.node');
                 const nodeId = nodeElement.getAttribute('data-id');
                 const toggleBtn = nodeElement.querySelector('.toggle-btn');
-                
+
                 childrenDiv.classList.remove('expanded');
                 childrenDiv.classList.add('collapsed');
                 toggleBtn.innerHTML = '+';
             });
-            
+
             updatePerformanceInfo('Collapsed all nodes');
         }
 
         function searchNodes() {
             const searchInput = document.getElementById('searchInput');
             searchTerm = searchInput.value.toLowerCase().trim();
-            
+
             // Clear previous search results and arrows
             document.querySelectorAll('.node-content.highlighted').forEach(element => {
                 element.classList.remove('highlighted');
             });
             clearSearchArrows();
-            
+
             if (searchTerm === '') return;
-            
+
             let matchCount = 0;
             const startTime = Date.now();
             const matchingNodes = [];
-            
+
             flatNodesMap.forEach((node, nodeId) => {
                 const englishMatch = node.name.toLowerCase().includes(searchTerm);
                 const germanMatch = node.german && node.german.toLowerCase().includes(searchTerm);
-                
+
                 if (englishMatch || germanMatch) {
                     matchCount++;
                     expandPathToNode(nodeId);
-                    
+
                     const nodeElement = document.querySelector(`[data-id="${nodeId}"] .node-content`);
                     if (nodeElement) {
                         nodeElement.classList.add('highlighted');
@@ -2586,14 +3418,14 @@
                     }
                 }
             });
-            
+
             const searchTime = Date.now() - startTime;
             updatePerformanceInfo(`Found ${matchCount} matches in ${searchTime}ms`);
-            
+
             // Add arrow indicators for all matching nodes
             setTimeout(() => {
                 addSearchArrows(matchingNodes);
-                
+
                 const firstMatch = document.querySelector('.node-content.highlighted');
                 if (firstMatch) {
                     firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2604,12 +3436,12 @@
         function expandPathToNode(nodeId) {
             const path = [];
             let currentNode = flatNodesMap.get(nodeId);
-            
+
             while (currentNode && currentNode.pid) {
                 path.unshift(currentNode.pid);
                 currentNode = flatNodesMap.get(currentNode.pid);
             }
-            
+
             path.forEach(id => {
                 const nodeElement = document.querySelector(`[data-id="${id}"]`);
                 if (nodeElement) {
@@ -2623,20 +3455,20 @@
 
         function addSearchArrows(matchingNodes) {
             clearSearchArrows(); // Clear any existing arrows first
-            
+
             matchingNodes.forEach((nodeElement, index) => {
                 const rect = nodeElement.getBoundingClientRect();
                 const arrow = document.createElement('div');
                 arrow.className = 'search-arrow';
                 arrow.style.top = (rect.top + rect.height / 2 - 12) + 'px'; // Center arrow with node
                 arrow.setAttribute('data-node-id', nodeElement.closest('[data-id]').getAttribute('data-id'));
-                
+
                 // Add a slight delay for each arrow to create a staggered animation effect
                 arrow.style.animationDelay = (index * 0.2) + 's';
-                
+
                 document.body.appendChild(arrow);
             });
-            
+
             // Update arrow positions on scroll
             updateArrowPositions();
         }
@@ -2676,7 +3508,7 @@
         }
 
         // Try to load default data on startup
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             // Don't load default data - force user to import CSV
             console.log('Interactive Organigram loaded - please import a CSV file to begin');
             updatePerformanceInfo('Ready - Please import a CSV file to get started');
@@ -2685,16 +3517,16 @@
 
         // Update toolbar button states based on whether data is loaded
         function updateToolbarState(hasData) {
-            const buttons = ['clearBtn', 'exportBtn', 'editBtn', 'duplicateBtn', 'expandL1', 'expandL2', 'collapseBtn', 'clearSearchBtn'];
+            const buttons = ['clearBtn', 'exportBtn', 'normalizeBtn', 'editBtn', 'duplicateBtn', 'expandL1', 'expandL2', 'collapseBtn', 'clearSearchBtn'];
             const searchInput = document.getElementById('searchInput');
-            
+
             buttons.forEach(buttonId => {
                 const button = document.getElementById(buttonId);
                 if (button) {
                     button.disabled = !hasData;
                 }
             });
-            
+
             if (searchInput) {
                 searchInput.disabled = !hasData;
                 if (!hasData) {
@@ -2715,9 +3547,9 @@
         }
 
         // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.ctrlKey || event.metaKey) {
-                switch(event.key) {
+                switch (event.key) {
                     case 'f':
                         event.preventDefault();
                         document.getElementById('searchInput').focus();
@@ -2742,11 +3574,11 @@
             const modal = document.getElementById('confirmationModal');
             const titleElement = document.getElementById('confirmationTitle');
             const messageElement = document.getElementById('confirmationMessage');
-            
+
             titleElement.textContent = title;
             messageElement.textContent = message;
             confirmationCallback = onConfirm;
-            
+
             modal.style.display = 'flex';
         }
 
@@ -2777,21 +3609,21 @@
 
             const modificationStats = getModificationStats();
             let message = 'This will permanently delete all loaded data and clear the organigram.';
-            
+
             if (modificationStats.totalModifications > 0) {
                 message += `\n\nYou have ${modificationStats.totalModifications} unsaved modification(s) that will be lost.`;
             }
-            
+
             message += '\n\nThis action cannot be undone. Are you sure?';
 
             showConfirmationModal(
                 'Clear All Data',
                 message,
-                function() {
+                function () {
                     // Clear session data and refresh the page for a fresh start
                     clearSession();
                     localStorage.removeItem('organigram_session');
-                    
+
                     // Refresh the page to start completely fresh
                     window.location.reload();
                 }
@@ -2799,7 +3631,7 @@
         }
 
         // Page unload warning
-        window.addEventListener('beforeunload', function(event) {
+        window.addEventListener('beforeunload', function (event) {
             if (hasUnsavedChanges || (sessionData.modifiedNodes && sessionData.modifiedNodes.size > 0)) {
                 const message = 'You have unsaved changes. Are you sure you want to leave?';
                 event.preventDefault();
@@ -2810,13 +3642,13 @@
 
         // Update search arrow positions on scroll
         let scrollTimeout;
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(updateArrowPositions, 16); // Throttle to ~60fps
         });
 
         // Modal event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const confirmBtn = document.getElementById('confirmationConfirm');
             const cancelBtn = document.getElementById('confirmationCancel');
             const modal = document.getElementById('confirmationModal');
@@ -2831,7 +3663,7 @@
 
             // Close modal when clicking outside
             if (modal) {
-                modal.addEventListener('click', function(event) {
+                modal.addEventListener('click', function (event) {
                     if (event.target === modal) {
                         closeConfirmationModal();
                     }
@@ -2862,4 +3694,5 @@
         </div>
     </div>
 </body>
+
 </html>
