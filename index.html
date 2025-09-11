@@ -108,16 +108,32 @@
             background: white;
             margin: 20px;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 2px dashed #cccccc;
+            border: 3px dashed #ff8c42;
             text-align: center;
             transition: all 0.3s;
         }
 
         .import-section.dragover {
-            border-color: #007bff;
-            background: #f8f9fa;
+            border-color: #ff6b35;
+            background: #fff8f5;
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        .import-section.dragover .file-drop-icon {
+            transform: scale(1.2);
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1.2) translateY(0px); }
+            100% { transform: scale(1.2) translateY(-5px); }
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         .import-section.hidden {
@@ -140,12 +156,28 @@
         }
 
         .file-drop-area {
-            padding: 40px;
+            padding: 60px;
             cursor: pointer;
+            position: relative;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
         .file-drop-area:hover {
-            background: #f8f9fa;
+            background: #fff8f5;
+        }
+
+        .file-drop-icon {
+            font-size: 48px;
+            color: #ff8c42;
+            margin-bottom: 15px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .file-drop-area:hover .file-drop-icon {
+            transform: scale(1.1);
+            color: #ff6b35;
         }
 
         .import-progress {
@@ -1181,6 +1213,70 @@
                 font-size: 12px;
             }
         }
+
+        /* Bottom Navigation Toolbar */
+        .bottom-toolbar {
+            position: fixed;
+            bottom: 20px;
+            left: 120px;
+            z-index: 98;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 0;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .nav-link {
+            color: #007bff;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 123, 255, 0.1);
+            color: #0056b3;
+        }
+
+        .nav-link:disabled,
+        .nav-link.disabled {
+            color: #999;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .nav-separator {
+            color: #666;
+            margin: 0 5px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-toolbar {
+                bottom: 10px;
+                left: 110px;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .nav-link {
+                padding: 3px 6px;
+            }
+
+            .nav-separator {
+                margin: 0 3px;
+            }
+        }
     </style>
 </head>
 
@@ -1197,9 +1293,6 @@
             <button class="btn" onclick="toggleEditMode()" id="editBtn" disabled>✏️ Edit Mode</button>
             <button class="btn" onclick="toggleDuplicateDetection()" id="duplicateBtn" disabled>🔍 Find
                 Duplicates</button>
-            <button class="btn" onclick="expandLevel(1)" id="expandL1" disabled>Show L1</button>
-            <button class="btn" onclick="expandLevel(2)" id="expandL2" disabled>Show L1-2</button>
-            <button class="btn" onclick="collapseAll()" id="collapseBtn" disabled>Collapse All</button>
             <input type="text" class="search-input" id="searchInput"
                 placeholder="Search nodes (English/German) - Press Enter to search..."
                 onkeypress="handleSearchKeypress(event)" disabled>
@@ -1208,12 +1301,23 @@
         </div>
     </div>
 
+    <!-- Welcome Introduction -->
+    <div id="welcomeIntroduction" style="background: white; margin: 20px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); text-align: center;">
+        <h3>🌳 Welcome to Interactive Organigram</h3>
+        <p style="margin: 20px 0; font-size: 16px; line-height: 1.6;">
+            Visualize your hierarchical data with powerful features: CSV Import/Export with drag & drop support, 
+            inline editing by clicking any node name, duplicate detection and navigation, 
+            interactive expand/collapse navigation, and mobile responsive design that works on all devices.
+        </p>
+        <p style="margin-top: 20px;"><strong>Get started by importing your CSV file below!</strong></p>
+    </div>
+
     <div class="import-section" id="importSection">
         <div class="file-drop-area" onclick="triggerFileInput()">
-            <h3>📁 Import Your Data</h3>
-            <p>Click here or drag & drop your CSV or Excel file to get started</p>
-            <p><small>Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed, merge</small>
-            </p>
+            <div class="file-drop-icon">📤</div>
+            <h3 style="margin: 0 0 10px 0; color: #333;">Import Your Data</h3>
+            <p style="margin: 5px 0; font-size: 16px; color: #666;">Click here or drag & drop your CSV or Excel file</p>
+            <p style="margin: 10px 0 0 0;"><small style="color: #999;">Required columns: name, id, pid, level | Optional: name_de, renamed, german_changed, merge</small></p>
             <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls"
                 onchange="handleFileSelect(event)">
         </div>
@@ -1239,41 +1343,24 @@
         <!-- Stats will be populated by JavaScript -->
     </div>
 
-    <!-- DEBUG SECTION -->
-    <div style="background: #f8f9fa; padding: 20px; margin: 20px; border-radius: 8px; border-left: 4px solid #007bff;">
-        <h4>🔧 Normalization Test</h4>
-        <div style="margin: 10px 0;">
-            <input type="text" id="testInput" placeholder="Enter text to normalize (e.g., 'DC-AC Inverter')" 
-                   style="width: 60%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            <button onclick="testNormalization()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; margin-left: 10px;">Test</button>
-        </div>
-        <div style="margin: 5px 0;">
-            <button onclick="quickTest('DC-AC Inverter')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">DC-AC Inverter</button>
-            <button onclick="quickTest('DC-DC/AC-DC Converter')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">DC-DC/AC-DC Converter</button>
-            <button onclick="quickTest('Motor control ECU')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">Motor control ECU</button>
-            <button onclick="quickTest('Power control ECU')" style="padding: 4px 8px; font-size: 12px; margin: 2px;">Power control ECU</button>
-        </div>
-        <div id="testResults" style="background: white; padding: 10px; border-radius: 4px; margin-top: 10px; font-family: monospace; white-space: pre-wrap;"></div>
-        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 4px; font-size: 12px;">
-            <strong>Browser Console Test:</strong> Open browser console and run: <code>testCDP()</code>
-        </div>
-    </div>
-
     <div class="tree-container">
         <div id="loading" class="loading">
-            <h3>🌳 Welcome to Interactive Organigram</h3>
-            <p>Import a CSV file above to visualize your hierarchical data with powerful features:</p>
-            <ul style="text-align: left; display: inline-block; margin-top: 20px;">
-                <li>📁 <strong>CSV Import/Export</strong> - Drag & drop or browse files</li>
-                <li>✏️ <strong>Inline Editing</strong> - Click any node name to edit</li>
-                <li>🔍 <strong>Duplicate Detection</strong> - Find and navigate duplicates</li>
-                <li>🎯 <strong>Interactive Navigation</strong> - Expand/collapse hierarchy</li>
-                <li>📱 <strong>Mobile Responsive</strong> - Works on all devices</li>
-            </ul>
-            <p style="margin-top: 20px;"><strong>Get started by importing your CSV file above!</strong></p>
+            <h3>📊 Ready to Import</h3>
+            <p>Your organigram will appear here once you import a CSV file above.</p>
         </div>
         <div id="error" class="error" style="display: none;"></div>
         <div id="tree" class="tree" style="display: none;"></div>
+    </div>
+
+    <!-- Bottom Navigation Toolbar -->
+    <div class="bottom-toolbar" id="bottomToolbar" style="display: none;">
+        <a href="#" class="nav-link" onclick="event.preventDefault(); collapseAll();" id="collapseAllNav">Collapse All</a>
+        <span class="nav-separator">></span>
+        <a href="#" class="nav-link" onclick="event.preventDefault(); expandLevel(1);" id="expandL1Nav">Show L1</a>
+        <span class="nav-separator">></span>
+        <a href="#" class="nav-link" onclick="event.preventDefault(); expandLevel(2);" id="expandL2Nav">Show L1-2</a>
+        <span class="nav-separator">></span>
+        <a href="#" class="nav-link" onclick="event.preventDefault(); expandLevel(3);" id="expandL3Nav">Show L2-3</a>
     </div>
 
     <!-- Duplicate Detection Panel -->
@@ -1631,9 +1718,14 @@
 
         // File handling
         function showImportSection() {
+            console.log('Showing import section and welcome introduction');
             const importSection = document.getElementById('importSection');
+            const welcomeIntroduction = document.getElementById('welcomeIntroduction');
+            
             importSection.classList.remove('hidden');
-            importSection.scrollIntoView({ behavior: 'smooth' });
+            welcomeIntroduction.classList.remove('hidden');
+            
+            welcomeIntroduction.scrollIntoView({ behavior: 'smooth' });
         }
 
         function clearData() {
@@ -1879,7 +1971,9 @@
         }
 
         function hideImportSection() {
+            console.log('Hiding import section and welcome introduction');
             document.getElementById('importSection').classList.add('hidden');
+            document.getElementById('welcomeIntroduction').classList.add('hidden');
         }
 
         function showProgress(show) {
@@ -2240,6 +2334,12 @@
                 element.classList.remove('node-duplicate');
             });
             duplicateGroups.clear();
+            
+            // Reset the header title when clearing duplicates
+            const header = document.querySelector('#duplicatePanel .duplicate-panel-header h3');
+            if (header) {
+                header.textContent = '🔍 Duplicate Nodes';
+            }
         }
 
         function showDuplicatePanel() {
@@ -2247,13 +2347,36 @@
         }
 
         function closeDuplicatePanel() {
-            document.getElementById('duplicatePanel').style.display = 'none';
+            const panel = document.getElementById('duplicatePanel');
+            const header = document.querySelector('#duplicatePanel .duplicate-panel-header h3');
+            
+            panel.style.display = 'none';
+            
+            // Reset the header title when closing
+            if (header) {
+                header.textContent = '🔍 Duplicate Nodes';
+            }
         }
 
         function updateDuplicatePanel() {
             const content = document.getElementById('duplicateContent');
+            const header = document.querySelector('#duplicatePanel .duplicate-panel-header h3');
+
+            // Calculate total number of duplicate nodes
+            let totalDuplicates = 0;
+            duplicateGroups.forEach(group => {
+                totalDuplicates += group.nodes.length;
+            });
+
+            // Update the header title with count
+            if (header) {
+                header.textContent = `🔍 Duplicate Nodes (${totalDuplicates})`;
+            }
 
             if (duplicateGroups.size === 0) {
+                if (header) {
+                    header.textContent = '🔍 Duplicate Nodes';
+                }
                 content.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No duplicates found within the same categories.</div>';
                 return;
             }
@@ -2345,110 +2468,6 @@
 
         // Configuration for normalization service
         const NORMALIZATION_SERVICE_URL = 'http://localhost:5000';
-
-        // Debug test function
-        async function testNormalization() {
-            const input = document.getElementById('testInput').value;
-            const results = document.getElementById('testResults');
-            
-            if (!input.trim()) {
-                results.textContent = 'Please enter some text to test';
-                return;
-            }
-
-            results.textContent = 'Testing...\n';
-            
-            try {
-                // Test single text normalization
-                console.log('🧪 Testing normalization for:', input);
-                const response = await fetch(`${NORMALIZATION_SERVICE_URL}/normalize-text`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text: input })
-                });
-
-                console.log('🧪 Response status:', response.status);
-
-                if (!response.ok) {
-                    throw new Error(`Service responded with status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('🧪 Service response:', data);
-
-                results.textContent = `🔍 INPUT: "${input}"
-📊 OUTPUT: "${data.normalized_text}"
-🔒 PRESERVED: ${JSON.stringify(data.preserved_terms)}
-📡 STATUS: Service call successful
-⏰ TIMESTAMP: ${new Date().toLocaleTimeString()}`;
-
-            } catch (error) {
-                console.error('🧪 Test error:', error);
-                results.textContent = `❌ ERROR: ${error.message}
-📡 Testing fallback normalization...
-
-Fallback result: "${toProperCaseBasic(input)}"
-⏰ TIMESTAMP: ${new Date().toLocaleTimeString()}`;
-            }
-        }
-
-        // Global test function for browser console
-        window.testCDP = async function() {
-            console.log('🧪 Testing CDP normalization...');
-            try {
-                const response = await fetch('http://localhost:5000/normalize-text', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text: 'Controller deceleration parking (CDP)' })
-                });
-
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                console.log('✅ SUCCESS!');
-                console.log('Input:', 'Controller deceleration parking (CDP)');
-                console.log('Output:', data.normalized_text);
-                console.log('Preserved:', data.preserved_terms);
-                
-                // Also display in the test results area
-                const results = document.getElementById('testResults');
-                if (results) {
-                    results.textContent = `✅ CONSOLE TEST SUCCESS
-INPUT: "Controller deceleration parking (CDP)"
-OUTPUT: "${data.normalized_text}"
-PRESERVED: ${JSON.stringify(data.preserved_terms)}
-STATUS: Service working correctly
-TIME: ${new Date().toLocaleTimeString()}`;
-                }
-                
-                return data;
-            } catch (error) {
-                console.error('❌ ERROR:', error);
-                
-                const results = document.getElementById('testResults');
-                if (results) {
-                    results.textContent = `❌ CONSOLE TEST FAILED
-ERROR: ${error.message}
-TIME: ${new Date().toLocaleTimeString()}`;
-                }
-                
-                throw error;
-            }
-        };
-
-        // Quick test function for specific cases
-        window.quickTest = async function(testText) {
-            document.getElementById('testInput').value = testText;
-            testNormalization();
-        };
 
         async function normalizeWithService(labels) {
             console.log('🔍 Starting normalization with service for labels:', labels);
@@ -3517,15 +3536,35 @@ TIME: ${new Date().toLocaleTimeString()}`;
 
         // Update toolbar button states based on whether data is loaded
         function updateToolbarState(hasData) {
-            const buttons = ['clearBtn', 'exportBtn', 'normalizeBtn', 'editBtn', 'duplicateBtn', 'expandL1', 'expandL2', 'collapseBtn', 'clearSearchBtn'];
+            const buttons = ['clearBtn', 'exportBtn', 'normalizeBtn', 'editBtn', 'duplicateBtn', 'clearSearchBtn'];
+            const navLinks = ['expandL1Nav', 'expandL2Nav', 'expandL3Nav', 'collapseAllNav'];
             const searchInput = document.getElementById('searchInput');
+            const bottomToolbar = document.getElementById('bottomToolbar');
 
+            // Handle regular buttons
             buttons.forEach(buttonId => {
                 const button = document.getElementById(buttonId);
                 if (button) {
                     button.disabled = !hasData;
                 }
             });
+
+            // Handle navigation links
+            navLinks.forEach(linkId => {
+                const link = document.getElementById(linkId);
+                if (link) {
+                    if (hasData) {
+                        link.classList.remove('disabled');
+                    } else {
+                        link.classList.add('disabled');
+                    }
+                }
+            });
+
+            // Show/hide bottom toolbar based on data availability
+            if (bottomToolbar) {
+                bottomToolbar.style.display = hasData ? 'flex' : 'none';
+            }
 
             if (searchInput) {
                 searchInput.disabled = !hasData;
